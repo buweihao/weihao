@@ -2,9 +2,12 @@
 import { getCatalogProducts } from "../../data/catalog";
 import CardProduct from "../products/CardProduct.astro";
 import Pagination from "../ui/Pagination.astro";
+import { defaultLocale, isLocale, type Locale } from "../../lib/i18n";
 
 const ITEMS_PER_PAGE = 8;
-const products = await getCatalogProducts();
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale: Locale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const products = await getCatalogProducts(currentLocale);
 const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 ---
 

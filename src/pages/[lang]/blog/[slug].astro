@@ -1,0 +1,103 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { blogPosts } from "../../../data/blogData";
+import Breadcrumbs from "../../../components/ui/Breadcrumbs.astro";
+import { locales, localePath } from "../../../lib/i18n";
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) =>
+    blogPosts.map((post) => ({
+      params: { lang, slug: post.slug },
+      props: { post, lang },
+    })),
+  );
+}
+
+const { post, lang } = Astro.props;
+const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
+---
+
+<Layout>
+  <article class="max-w-4xl mx-auto px-4 py-10 lg:py-16">
+    <div class="mb-8">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: localePath(lang, "/") },
+          { label: "Blog", href: localePath(lang, "/blog") },
+          {
+            label: post.title.substring(0, 20) + "...",
+            href: Astro.url.pathname,
+          },
+        ]}
+      />
+    </div>
+
+    <img
+      src={post.image}
+      alt={post.title}
+      class="w-full h-64 md:h-96 object-cover rounded-3xl shadow-xl mb-10"
+    />
+
+    <div class="mb-8 text-center md:text-left">
+      <h1
+        class="text-3xl md:text-5xl font-extrabold text-base-content mb-4 leading-tight"
+      >
+        {post.title}
+      </h1>
+
+      <p
+        class="text-base-content/60 text-sm font-medium flex items-center justify-center md:justify-start gap-2"
+      >
+        {post.date}
+        <span class="mx-1">•</span>
+        {post.author}
+      </p>
+    </div>
+
+    <div
+      class="prose prose-lg prose-headings:font-bold prose-headings:text-base-content prose-p:text-base-content/80 prose-a:text-primary max-w-none"
+      set:html={post.content}
+    />
+
+    <div class="mt-12 pt-8 border-t border-base-200">
+      <a href={localePath(lang, "/blog")} class="btn btn-outline btn-primary rounded-full gap-2">
+        Back to Blog
+      </a>
+    </div>
+
+    {
+      relatedPosts.length > 0 && (
+        <section class="mt-20">
+          <h2 class="text-3xl font-bold text-base-content mb-8 border-l-4 border-primary pl-4">
+            Related Articles
+          </h2>
+
+          <div class="grid gap-8 md:grid-cols-2">
+            {relatedPosts.map((p) => (
+              <a
+                href={localePath(lang, `/blog/${p.slug}`)}
+                class="card bg-base-100 shadow-lg hover:shadow-2xl transition-all duration-300 group overflow-hidden border border-base-200"
+              >
+                <figure class="h-48 overflow-hidden">
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </figure>
+                <div class="card-body">
+                  <h3 class="card-title text-lg group-hover:text-primary transition-colors">
+                    {p.title}
+                  </h3>
+                  <p class="text-base-content/70 text-sm line-clamp-2">
+                    {p.description}
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </article>
+</Layout>

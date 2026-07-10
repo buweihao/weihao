@@ -1,117 +1,81 @@
 ---
 import { Icon } from "astro-icon/components";
+import { getHeroSlides } from "../../data/catalog";
+import { defaultLocale, isLocale } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const slides = await getHeroSlides(currentLocale);
 ---
 
 <section class="relative w-full overflow-hidden">
     <!-- Swiper Container -->
     <div class="swiper hero-swiper h-[350px] sm:h-[450px] md:h-[500px]">
         <div class="swiper-wrapper">
-            <!-- Slide 1: Laptops -->
-            <div class="swiper-slide relative">
-                <img
-                    src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1920&auto=format&fit=crop"
-                    alt="Luxury Laptops"
-                    class="absolute inset-0 w-full h-full object-cover"
-                />
-                <div
-                    class="absolute inset-0 bg-black/40 flex items-center justify-center text-center px-4"
-                >
-                    <div class="max-w-3xl animate-fade-in">
-                        <h2
-                            class="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight"
+            {
+                slides.map((slide) => (
+                    <div class="swiper-slide relative">
+                        <img
+                            src={slide.image}
+                            alt={slide.alt}
+                            class="absolute inset-0 w-full h-full object-cover"
+                        />
+                        <div
+                            class:list={[
+                                "absolute inset-0 px-4 md:px-24",
+                                slide.align === "left"
+                                    ? "bg-linear-to-r from-black/60 to-transparent flex items-center justify-start"
+                                    : "bg-black/45 flex items-center justify-center text-center",
+                            ]}
                         >
-                            Next-Gen Performance
-                        </h2>
-                        <p
-                            class="text-lg md:text-xl text-white/90 mb-8 max-w-xl mx-auto"
-                        >
-                            Discover our new collection of high-performance
-                            laptops designed for creators and professionals.
-                        </p>
-                        <a
-                            href="/shop/laptops"
-                            class="btn btn-primary btn-lg rounded-full px-8 shadow-xl hover:scale-105 transition-transform"
-                        >
-                            Shop Laptops
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 2: Smartphones -->
-            <div class="swiper-slide relative">
-                <img
-                    src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1920&auto=format&fit=crop"
-                    alt="Modern Smartphones"
-                    class="absolute inset-0 w-full h-full object-cover"
-                />
-                <div
-                    class="absolute inset-0 bg-linear-to-r from-black/60 to-transparent flex items-center justify-start px-8 md:px-24"
-                >
-                    <div class="max-w-2xl text-left">
-                        <span
-                            class="badge badge-primary mb-4 p-4 font-bold uppercase tracking-widest"
-                            >New Arrival</span
-                        >
-                        <h2
-                            class="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight"
-                        >
-                            Smart Connections
-                        </h2>
-                        <p class="text-lg md:text-xl text-white/90 mb-8">
-                            Stay ahead with the latest mobile technology.
-                            Experience power and elegance in the palm of your
-                            hand.
-                        </p>
-                        <a
-                            href="/shop/phones"
-                            class="btn btn-secondary btn-lg rounded-full px-8 shadow-xl hover:scale-105 transition-transform"
-                        >
-                            Explore Phones
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 3: Gaming -->
-            <div class="swiper-slide relative">
-                <img
-                    src="https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920&auto=format&fit=crop"
-                    alt="Gaming Gear"
-                    class="absolute inset-0 w-full h-full object-cover"
-                />
-                <div
-                    class="absolute inset-0 bg-black/50 flex items-center justify-center text-center px-4"
-                >
-                    <div class="max-w-3xl">
-                        <h2
-                            class="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight"
-                        >
-                            Level Up Your Game
-                        </h2>
-                        <p
-                            class="text-lg md:text-xl text-white/90 mb-8 max-w-xl mx-auto"
-                        >
-                            Immerse yourself in the ultimate gaming experience
-                            with our pro-level gear and custom setups.
-                        </p>
-                        <div class="flex flex-wrap justify-center gap-4">
-                            <a
-                                href="/shop/gaming"
-                                class="btn btn-primary btn-lg rounded-full px-8 shadow-xl hover:shadow-primary/20 transition-all"
+                            <div
+                                class:list={[
+                                    "animate-fade-in",
+                                    slide.align === "left" ? "max-w-2xl text-left" : "max-w-3xl",
+                                ]}
                             >
-                                Get the Gear
-                            </a>
-                            <a
-                                href="/shop/accessories"
-                                class="btn btn-outline btn-white btn-lg rounded-full px-8 text-white hover:bg-white hover:text-black transition-all"
-                            >
-                                Accessories
-                            </a>
+                                {slide.eyebrow && (
+                                    <span class="badge badge-primary mb-4 p-4 font-bold uppercase tracking-widest">
+                                        {slide.eyebrow}
+                                    </span>
+                                )}
+                                <h2 class="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+                                    {slide.title}
+                                </h2>
+                                <p
+                                    class:list={[
+                                        "text-lg md:text-xl text-white/90 mb-8",
+                                        slide.align === "left" ? "" : "max-w-xl mx-auto",
+                                    ]}
+                                >
+                                    {slide.description}
+                                </p>
+                                <div
+                                    class:list={[
+                                        "flex flex-wrap gap-4",
+                                        slide.align === "left" ? "justify-start" : "justify-center",
+                                    ]}
+                                >
+                                    <a
+                                        href={slide.primaryHref}
+                                        class="btn btn-primary btn-lg rounded-full px-8 shadow-xl hover:scale-105 transition-transform"
+                                    >
+                                        {slide.primaryLabel}
+                                    </a>
+                                    {slide.secondaryLabel && slide.secondaryHref && (
+                                        <a
+                                            href={slide.secondaryHref}
+                                            class="btn btn-outline btn-white btn-lg rounded-full px-8 text-white hover:bg-white hover:text-black transition-all"
+                                        >
+                                            {slide.secondaryLabel}
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                ))
+            }
         </div>
 
         <!-- Navigation -->

@@ -1,30 +1,38 @@
 ---
 import { Icon } from "astro-icon/components";
+import { localePath, type Locale, ui } from "../../lib/i18n";
+
+type Props = {
+    currentLocale: Locale;
+};
+
+const { currentLocale } = Astro.props;
+const copy = ui[currentLocale];
 
 const categories = [
-    { name: "Home", href: "/" },
+    { name: copy.nav.home, href: localePath(currentLocale, "/") },
     {
-        name: "Computers",
-        href: "/category/computers",
+        name: copy.nav.computers,
+        href: localePath(currentLocale, "/category/computers"),
         subcategories: [
-            { name: "All", href: "/category/computers" },
-            { name: "Notebooks", href: "/category/computers?sub=notebooks" },
-            { name: "Keyboards", href: "/category/computers?sub=keyboards" },
-            { name: "Monitors", href: "/category/computers?sub=monitors" },
+            { name: copy.nav.all, href: localePath(currentLocale, "/category/computers") },
+            { name: copy.nav.notebooks, href: localePath(currentLocale, "/category/computers?sub=notebooks") },
+            { name: copy.nav.keyboards, href: localePath(currentLocale, "/category/computers?sub=keyboards") },
+            { name: copy.nav.monitors, href: localePath(currentLocale, "/category/computers?sub=monitors") },
         ],
     },
     {
-        name: "Phones",
-        href: "/category/phones",
+        name: copy.nav.phones,
+        href: localePath(currentLocale, "/category/phones"),
         subcategories: [
-            { name: "All", href: "/category/phones" },
-            { name: "Android", href: "/category/phones?sub=android" },
-            { name: "iPhone", href: "/category/phones?sub=iphone" },
-            { name: "Accessories", href: "/category/accessories" },
+            { name: copy.nav.all, href: localePath(currentLocale, "/category/phones") },
+            { name: copy.nav.android, href: localePath(currentLocale, "/category/phones?sub=android") },
+            { name: copy.nav.iphone, href: localePath(currentLocale, "/category/phones?sub=iphone") },
+            { name: copy.nav.accessories, href: localePath(currentLocale, "/category/accessories") },
         ],
     },
-    { name: "Audio", href: "/category/audio" },
-    { name: "Accessories", href: "/category/accessories" },
+    { name: copy.nav.audio, href: localePath(currentLocale, "/category/audio") },
+    { name: copy.nav.accessories, href: localePath(currentLocale, "/category/accessories") },
 ];
 ---
 
@@ -40,7 +48,7 @@ const categories = [
                 id="mobile-links-toggle"
                 class="flex items-center gap-2 h-full px-2 hover:bg-white/10 transition-colors cursor-pointer"
             >
-                <span>Categories</span>
+                <span>{copy.categories}</span>
                 <Icon
                     name="lucide:chevron-down"
                     id="chevron-icon"
@@ -50,9 +58,9 @@ const categories = [
 
             <div class="flex h-full items-center">
                 <a
-                    href="/contact"
+                    href={localePath(currentLocale, "/contact")}
                     class="flex items-center h-full px-2 hover:bg-white/10 transition-colors"
-                    >Contact</a
+                    >{copy.nav.contact}</a
                 >
             </div>
         </div>
@@ -105,19 +113,19 @@ const categories = [
         <!-- Desktop: Right Side -->
         <div class="hidden sm:flex h-full items-center">
             <a
-                href="/about"
+                href={localePath(currentLocale, "/about")}
                 class="flex items-center h-full px-4 hover:bg-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
-                >About</a
+                >{copy.nav.about}</a
             >
             <a
-                href="/blog"
+                href={localePath(currentLocale, "/blog")}
                 class="flex items-center h-full px-4 hover:bg-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
-                >Blog</a
+                >{copy.nav.blog}</a
             >
             <a
-                href="/contact"
+                href={localePath(currentLocale, "/contact")}
                 class="flex items-center h-full px-4 hover:bg-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
-                >Contact</a
+                >{copy.nav.contact}</a
             >
         </div>
     </div>
@@ -138,7 +146,7 @@ const categories = [
                             {cat.name}
                             {cat.subcategories && (
                                 <span class="text-[10px] opacity-40 uppercase font-bold italic">
-                                    Browse
+                                    {copy.browse}
                                 </span>
                             )}
                         </a>
@@ -160,17 +168,17 @@ const categories = [
             <div
                 class="bg-primary/50 py-2 px-6 text-white/60 uppercase text-[10px] tracking-widest font-bold"
             >
-                More Info
+                {copy.moreInfo}
             </div>
             <a
-                href="/about"
+                href={localePath(currentLocale, "/about")}
                 class="py-3 px-6 hover:bg-white/10 border-b border-white/5 transition-colors"
-                >About Us</a
+                >{copy.nav.aboutUs}</a
             >
             <a
-                href="/blog"
+                href={localePath(currentLocale, "/blog")}
                 class="py-3 px-6 hover:bg-white/10 border-b border-white/5 transition-colors"
-                >Our Blog</a
+                >{copy.nav.ourBlog}</a
             >
         </div>
     </div>

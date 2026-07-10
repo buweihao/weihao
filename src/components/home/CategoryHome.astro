@@ -2,8 +2,11 @@
 import CategoryCardHome from "./CategoryCardHome.astro";
 import { getCatalogCategories } from "../../data/catalog";
 import { featuredLinks } from "../../data/home.ts";
+import { defaultLocale, isLocale, localizedPath, type Locale } from "../../lib/i18n";
 
-const categories = await getCatalogCategories();
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale: Locale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const categories = await getCatalogCategories(currentLocale);
 ---
 
 <section class="py-10 bg-white">
@@ -29,7 +32,7 @@ const categories = await getCatalogCategories();
                     <CategoryCardHome
                         name={link.name}
                         image={link.image}
-                        path={link.path}
+                        path={localizedPath(link.path, currentLocale)}
                         className={link.className}
                         imageClass={link.imageClass}
                     />

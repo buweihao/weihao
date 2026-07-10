@@ -1,27 +1,34 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import Breadcrumbs from "../../components/ui/Breadcrumbs.astro";
-import ProductGallery from "../../components/products/ProductGallery.astro";
-import ProductInfo from "../../components/products/ProductInfo.astro";
-import CardProduct from "../../components/products/CardProduct.astro";
+import Layout from "../../../layouts/Layout.astro";
+import Breadcrumbs from "../../../components/ui/Breadcrumbs.astro";
+import ProductGallery from "../../../components/products/ProductGallery.astro";
+import ProductInfo from "../../../components/products/ProductInfo.astro";
+import CardProduct from "../../../components/products/CardProduct.astro";
 import {
     getCatalogProducts,
     getRelatedProductsFromList,
     slugifyCategory,
-} from "../../data/catalog";
-import { defaultLocale, localePath } from "../../lib/i18n";
+} from "../../../data/catalog";
+import { localePath, locales, type Locale } from "../../../lib/i18n";
 
 export async function getStaticPaths() {
-    const products = await getCatalogProducts(defaultLocale);
+    const paths = [];
 
-    return products.map((product) => ({
-        params: { slug: product.slug },
-        props: { product },
-    }));
+    for (const lang of locales) {
+        const products = await getCatalogProducts(lang);
+        for (const product of products) {
+            paths.push({
+                params: { lang, slug: product.slug },
+                props: { product, lang },
+            });
+        }
+    }
+
+    return paths;
 }
 
-const { product } = Astro.props;
-const products = await getCatalogProducts(defaultLocale);
+const { product, lang } = Astro.props as { product: any; lang: Locale };
+const products = await getCatalogProducts(lang);
 const relatedProducts = getRelatedProductsFromList(
     products,
     product.category,
@@ -29,10 +36,10 @@ const relatedProducts = getRelatedProductsFromList(
 );
 
 const breadcrumbItems = [
-    { label: "Home", href: localePath(defaultLocale, "/") },
+    { label: "Home", href: localePath(lang, "/") },
     {
         label: product.category,
-        href: localePath(defaultLocale, `/category/${slugifyCategory(product.category)}`),
+        href: localePath(lang, `/category/${slugifyCategory(product.category)}`),
     },
     { label: product.name },
 ];
@@ -46,14 +53,10 @@ const breadcrumbItems = [
 
         <main class="max-w-7xl mx-auto px-6 py-12 md:py-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24">
-                <!-- Gallery Section -->
                 <ProductGallery images={product.images} />
-
-                <!-- Info Section -->
                 <ProductInfo product={product} />
             </div>
 
-            <!-- Related Products Section -->
             <section class="mt-32">
                 <div
                     class="flex items-center justify-between mb-12 border-b border-slate-100 pb-8"
@@ -86,7 +89,6 @@ const breadcrumbItems = [
 </Layout>
 
 <style>
-    /* Add some premium spacing and transitions */
     main {
         animation: fadeIn 0.8s ease-out;
     }

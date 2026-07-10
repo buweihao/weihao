@@ -1,6 +1,23 @@
 ---
 import { Icon } from "astro-icon/components";
 import Links from "./Links.astro";
+import {
+    localeLabels,
+    localePath,
+    locales,
+    stripLocale,
+    type Locale,
+    ui,
+} from "../../lib/i18n";
+
+type Props = {
+    currentLocale: Locale;
+    currentPath: string;
+};
+
+const { currentLocale, currentPath } = Astro.props;
+const copy = ui[currentLocale];
+const pathWithoutLocale = stripLocale(currentPath);
 ---
 
 <div
@@ -11,7 +28,7 @@ import Links from "./Links.astro";
         <nav class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Left Side: Logo -->
             <div class="navbar-start">
-                <a href="/" class="flex items-center gap-2 group">
+                <a href={localePath(currentLocale, "/")} class="flex items-center gap-2 group">
                     <div
                         class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform shadow-sm"
                     >
@@ -35,10 +52,31 @@ import Links from "./Links.astro";
 
             <!-- Right Side: Icons -->
             <div class="navbar-end gap-2 sm:gap-4">
+                <div class="hidden md:flex gap-1 rounded-full bg-base-200 p-1 text-xs font-bold shadow-inner">
+                    {
+                        locales.map((locale) => (
+                            <a
+                                href={localePath(locale, pathWithoutLocale)}
+                                data-locale-choice={locale}
+                                class:list={[
+                                    "rounded-full px-3 py-1 transition-colors",
+                                    locale === currentLocale
+                                        ? "bg-primary text-primary-content shadow-sm"
+                                        : "text-base-content/70 hover:bg-base-100",
+                                ]}
+                                aria-current={
+                                    locale === currentLocale ? "page" : undefined
+                                }
+                            >
+                                {localeLabels[locale]}
+                            </a>
+                        ))
+                    }
+                </div>
                 <a
-                    href="/favorites"
+                    href={localePath(currentLocale, "/favorites")}
                     class="btn btn-ghost btn-circle hover:bg-primary/10 transition-colors"
-                    aria-label="Favorites"
+                    aria-label={copy.favorites}
                 >
                     <div class="indicator">
                         <Icon
@@ -55,7 +93,7 @@ import Links from "./Links.astro";
                 <button
                     id="cart-button"
                     class="btn btn-ghost btn-circle hover:bg-primary/10 transition-colors"
-                    aria-label="Shopping Cart"
+                    aria-label={copy.cart}
                 >
                     <div class="indicator">
                         <Icon
@@ -72,7 +110,7 @@ import Links from "./Links.astro";
             </div>
         </nav>
     </div>
-    <Links />
+    <Links currentLocale={currentLocale} />
 </div>
 
 <script>
@@ -135,6 +173,15 @@ import Links from "./Links.astro";
         }
 
         lastScrollY = currentScrollY;
+    });
+
+    document.querySelectorAll("[data-locale-choice]").forEach((link) => {
+        link.addEventListener("click", () => {
+            const locale = link.getAttribute("data-locale-choice");
+            if (!locale) return;
+            document.cookie = `site-locale=${locale}; path=/; max-age=31536000; SameSite=Lax`;
+            window.localStorage.setItem("site-locale", locale);
+        });
     });
 </script>
 

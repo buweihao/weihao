@@ -1,5 +1,13 @@
 ---
 import { Icon } from "astro-icon/components";
+import { localePath, type Locale, ui } from "../../lib/i18n";
+
+type Props = {
+    currentLocale: Locale;
+};
+
+const { currentLocale } = Astro.props;
+const copy = ui[currentLocale];
 ---
 
 <footer class="bg-base-300 text-base-content pt-16 pb-8 mt-auto">
@@ -9,7 +17,7 @@ import { Icon } from "astro-icon/components";
         >
             <!-- Brand Section -->
             <div class="col-span-1 lg:col-span-1">
-                <a href="/" class="flex items-center gap-2 mb-6 group">
+                <a href={localePath(currentLocale, "/")} class="flex items-center gap-2 mb-6 group">
                     <div
                         class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg"
                     >
@@ -25,8 +33,7 @@ import { Icon } from "astro-icon/components";
                     </span>
                 </a>
                 <p class="text-base-content/70 mb-6 leading-relaxed">
-                    Premium tech gear for the modern professional. Elevate your
-                    digital lifestyle with our curated collection.
+                    {copy.footer.copy}
                 </p>
                 <!-- Socials -->
                 <div class="flex gap-4">
@@ -57,35 +64,35 @@ import { Icon } from "astro-icon/components";
             <!-- Links Column 1 -->
             <div>
                 <h3 class="font-bold text-lg mb-6 text-base-content/90">
-                    Shop
+                    {copy.footer.shop}
                 </h3>
                 <ul class="space-y-4">
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >All Products</a
+                            >{copy.footer.allProducts}</a
                         >
                     </li>
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >Featured</a
+                            >{copy.footer.featured}</a
                         >
                     </li>
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >New Arrivals</a
+                            >{copy.footer.newArrivals}</a
                         >
                     </li>
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >Discounts</a
+                            >{copy.footer.discounts}</a
                         >
                     </li>
                 </ul>
@@ -94,35 +101,35 @@ import { Icon } from "astro-icon/components";
             <!-- Links Column 2 -->
             <div>
                 <h3 class="font-bold text-lg mb-6 text-base-content/90">
-                    Support
+                    {copy.footer.support}
                 </h3>
                 <ul class="space-y-4">
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >Contact Us</a
+                            >{copy.footer.contactUs}</a
                         >
                     </li>
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >FAQs</a
+                            >{copy.footer.faqs}</a
                         >
                     </li>
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >Shipping & Returns</a
+                            >{copy.footer.shippingReturns}</a
                         >
                     </li>
                     <li>
                         <a
                             href="#"
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
-                            >Order Status</a
+                            >{copy.footer.orderStatus}</a
                         >
                     </li>
                 </ul>
@@ -131,17 +138,16 @@ import { Icon } from "astro-icon/components";
             <!-- Newsletter -->
             <div>
                 <h3 class="font-bold text-lg mb-6 text-base-content/90">
-                    Stay Updated
+                    {copy.footer.stayUpdated}
                 </h3>
                 <p class="text-base-content/70 mb-4 text-sm">
-                    Subscribe to our newsletter for exclusive deals and tech
-                    news.
+                    {copy.footer.newsletter}
                 </p>
                 <div class="form-control w-full">
                     <div class="relative">
                         <input
                             type="text"
-                            placeholder="Enter your email"
+                            placeholder={copy.footer.emailPlaceholder}
                             class="input input-bordered w-full pr-12 focus:outline-hidden focus:border-primary"
                         />
                         <button
@@ -159,14 +165,14 @@ import { Icon } from "astro-icon/components";
             class="border-t border-base-content/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-base-content/50"
         >
             <p>
-                &copy; {new Date().getFullYear()} E-COMMER. All rights reserved.
+                &copy; {new Date().getFullYear()} E-COMMER. {copy.footer.rights}
             </p>
             <div class="flex gap-6">
                 <a href="#" class="hover:text-base-content transition-colors"
-                    >Privacy Policy</a
+                    >{copy.footer.privacy}</a
                 >
                 <a href="#" class="hover:text-base-content transition-colors"
-                    >Terms of Service</a
+                    >{copy.footer.terms}</a
                 >
             </div>
         </div>
