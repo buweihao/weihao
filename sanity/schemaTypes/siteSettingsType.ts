@@ -45,9 +45,58 @@ export const siteSettingsType = defineType({
             type: "string",
         }),
         defineField({
+            name: "footerCopy",
+            title: "Footer description",
+            type: "text",
+            rows: 3,
+            description: "Default footer sentence under the site logo.",
+        }),
+        localizedText("footerCopyI18n", "Footer description translations"),
+        defineField({
+            name: "contactSubtitle",
+            title: "Contact page intro",
+            type: "text",
+            rows: 4,
+            description: "Intro paragraph on the contact page.",
+        }),
+        localizedText("contactSubtitleI18n", "Contact page intro translations"),
+        defineField({
+            name: "contactAddress",
+            title: "Contact address",
+            type: "text",
+            rows: 2,
+        }),
+        localizedText("contactAddressI18n", "Contact address translations"),
+        defineField({
+            name: "contactPhone",
+            title: "Contact phone",
+            type: "string",
+        }),
+        defineField({
+            name: "whatsappPhone",
+            title: "WhatsApp phone number",
+            type: "string",
+            description:
+                "Enter a phone number with country code, for example +15551234567. The website will create the WhatsApp chat link automatically.",
+        }),
+        defineField({
             name: "whatsappUrl",
-            title: "WhatsApp URL",
+            title: "Legacy WhatsApp URL",
             type: "url",
+            hidden: true,
+        }),
+        defineField({
+            name: "socialLinks",
+            title: "Follow Us links",
+            type: "object",
+            fields: [
+                defineField({ name: "facebook", title: "Facebook URL", type: "url" }),
+                defineField({ name: "twitter", title: "Twitter / X URL", type: "url" }),
+                defineField({ name: "instagram", title: "Instagram URL", type: "url" }),
+                defineField({ name: "linkedin", title: "LinkedIn URL", type: "url" }),
+                defineField({ name: "youtube", title: "YouTube URL", type: "url" }),
+                defineField({ name: "github", title: "GitHub URL", type: "url" }),
+            ],
         }),
         defineField({
             name: "heroSlides",
@@ -59,72 +108,17 @@ export const siteSettingsType = defineType({
                     fields: [
                         defineField({
                             name: "image",
-                            title: "Background image",
+                            title: "Carousel image",
                             type: "image",
                             options: { hotspot: true },
                             validation: (rule) => rule.required(),
                         }),
                         defineField({
-                            name: "alt",
-                            title: "Image alt text",
+                            name: "href",
+                            title: "Click-through URL",
                             type: "string",
-                        }),
-                        localizedString("altI18n", "Image alt translations"),
-                        defineField({
-                            name: "eyebrow",
-                            title: "Eyebrow",
-                            type: "string",
-                        }),
-                        localizedString("eyebrowI18n", "Eyebrow translations"),
-                        defineField({
-                            name: "title",
-                            title: "Title",
-                            type: "string",
+                            description: "Use a local path like /products?type=cleansing or a full URL.",
                             validation: (rule) => rule.required(),
-                        }),
-                        localizedString("titleI18n", "Title translations"),
-                        defineField({
-                            name: "description",
-                            title: "Description",
-                            type: "text",
-                            rows: 3,
-                        }),
-                        localizedText("descriptionI18n", "Description translations"),
-                        defineField({
-                            name: "primaryLabel",
-                            title: "Primary button label",
-                            type: "string",
-                        }),
-                        localizedString("primaryLabelI18n", "Primary label translations"),
-                        defineField({
-                            name: "primaryHref",
-                            title: "Primary button URL",
-                            type: "string",
-                            description: "Use a local path like /category/computers or a full URL.",
-                        }),
-                        defineField({
-                            name: "secondaryLabel",
-                            title: "Secondary button label",
-                            type: "string",
-                        }),
-                        localizedString("secondaryLabelI18n", "Secondary label translations"),
-                        defineField({
-                            name: "secondaryHref",
-                            title: "Secondary button URL",
-                            type: "string",
-                        }),
-                        defineField({
-                            name: "align",
-                            title: "Text alignment",
-                            type: "string",
-                            initialValue: "center",
-                            options: {
-                                list: [
-                                    { title: "Center", value: "center" },
-                                    { title: "Left", value: "left" },
-                                ],
-                                layout: "radio",
-                            },
                         }),
                         defineField({
                             name: "order",
@@ -135,9 +129,15 @@ export const siteSettingsType = defineType({
                     ],
                     preview: {
                         select: {
-                            title: "title",
-                            subtitle: "primaryHref",
+                            title: "href",
                             media: "image",
+                        },
+                        prepare({ title, media }) {
+                            return {
+                                title: title || "Carousel slide",
+                                subtitle: "Image click-through",
+                                media,
+                            };
                         },
                     },
                 }),

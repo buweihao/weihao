@@ -1,5 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
+import { getSiteSettings } from "../../data/siteSettings";
 import { localePath, type Locale, ui } from "../../lib/i18n";
 
 type Props = {
@@ -8,6 +9,7 @@ type Props = {
 
 const { currentLocale } = Astro.props;
 const copy = ui[currentLocale];
+const siteSettings = await getSiteSettings(currentLocale);
 ---
 
 <footer class="bg-base-300 text-base-content pt-16 pb-8 mt-auto">
@@ -33,32 +35,26 @@ const copy = ui[currentLocale];
                     </span>
                 </a>
                 <p class="text-base-content/70 mb-6 leading-relaxed">
-                    {copy.footer.copy}
+                    {siteSettings.footerCopy}
                 </p>
                 <!-- Socials -->
-                <div class="flex gap-4">
-                    <a
-                        href="#"
-                        class="btn btn-circle btn-sm btn-ghost hover:bg-primary/20 hover:text-primary transition-colors"
-                        aria-label="Twitter"
-                    >
-                        <Icon name="lucide:twitter" class="w-5 h-5" />
-                    </a>
-                    <a
-                        href="#"
-                        class="btn btn-circle btn-sm btn-ghost hover:bg-primary/20 hover:text-primary transition-colors"
-                        aria-label="Instagram"
-                    >
-                        <Icon name="lucide:instagram" class="w-5 h-5" />
-                    </a>
-                    <a
-                        href="#"
-                        class="btn btn-circle btn-sm btn-ghost hover:bg-primary/20 hover:text-primary transition-colors"
-                        aria-label="Github"
-                    >
-                        <Icon name="lucide:github" class="w-5 h-5" />
-                    </a>
-                </div>
+                {
+                    siteSettings.socialLinks.length > 0 && (
+                        <div class="flex gap-4">
+                            {siteSettings.socialLinks.map((link) => (
+                                <a
+                                    href={link.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn btn-circle btn-sm btn-ghost hover:bg-primary/20 hover:text-primary transition-colors"
+                                    aria-label={link.name}
+                                >
+                                    <Icon name={link.icon} class="w-5 h-5" />
+                                </a>
+                            ))}
+                        </div>
+                    )
+                }
             </div>
 
             <!-- Links Column 1 -->
@@ -69,7 +65,7 @@ const copy = ui[currentLocale];
                 <ul class="space-y-4">
                     <li>
                         <a
-                            href="#"
+                            href={localePath(currentLocale, "/products")}
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
                             >{copy.footer.allProducts}</a
                         >

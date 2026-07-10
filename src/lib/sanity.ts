@@ -29,6 +29,9 @@ export type SanityProductDocument = {
     price?: number | null;
     description?: string | null;
     descriptionI18n?: Partial<Record<Locale, string | null>> | null;
+    productTypeName?: string | null;
+    productTypeNameI18n?: Partial<Record<Locale, string | null>> | null;
+    productTypeSlug?: string | null;
     category?: string | null;
     categoryI18n?: Partial<Record<Locale, string | null>> | null;
     subcategory?: string | null;
@@ -54,21 +57,8 @@ export type SanityCategoryDocument = {
 };
 
 export type SanityHeroSlide = {
-    alt?: string | null;
-    altI18n?: Partial<Record<Locale, string | null>> | null;
-    eyebrow?: string | null;
-    eyebrowI18n?: Partial<Record<Locale, string | null>> | null;
-    title?: string | null;
-    titleI18n?: Partial<Record<Locale, string | null>> | null;
-    description?: string | null;
-    descriptionI18n?: Partial<Record<Locale, string | null>> | null;
-    primaryLabel?: string | null;
-    primaryLabelI18n?: Partial<Record<Locale, string | null>> | null;
+    href?: string | null;
     primaryHref?: string | null;
-    secondaryLabel?: string | null;
-    secondaryLabelI18n?: Partial<Record<Locale, string | null>> | null;
-    secondaryHref?: string | null;
-    align?: "center" | "left" | null;
     image?: { asset?: unknown } | null;
 };
 
@@ -77,6 +67,17 @@ export type SanitySiteSettings = {
     titleI18n?: Partial<Record<Locale, string | null>> | null;
     announcement?: string | null;
     announcementI18n?: Partial<Record<Locale, string | null>> | null;
+    footerCopy?: string | null;
+    footerCopyI18n?: Partial<Record<Locale, string | null>> | null;
+    contactSubtitle?: string | null;
+    contactSubtitleI18n?: Partial<Record<Locale, string | null>> | null;
+    contactAddress?: string | null;
+    contactAddressI18n?: Partial<Record<Locale, string | null>> | null;
+    contactPhone?: string | null;
+    contactEmail?: string | null;
+    whatsappPhone?: string | null;
+    whatsappUrl?: string | null;
+    socialLinks?: Partial<Record<"facebook" | "twitter" | "instagram" | "linkedin" | "youtube" | "github", string | null>> | null;
     heroSlides?: SanityHeroSlide[] | null;
 };
 
@@ -98,6 +99,9 @@ export async function fetchSanityProducts(): Promise<SanityProductDocument[]> {
                 price,
                 description,
                 descriptionI18n,
+                "productTypeName": productType->name,
+                "productTypeNameI18n": productType->nameI18n,
+                "productTypeSlug": productType->slug.current,
                 category,
                 categoryI18n,
                 subcategory,
@@ -158,22 +162,20 @@ export async function fetchSanitySiteSettings(): Promise<SanitySiteSettings | nu
                 titleI18n,
                 announcement,
                 announcementI18n,
+                footerCopy,
+                footerCopyI18n,
+                contactSubtitle,
+                contactSubtitleI18n,
+                contactAddress,
+                contactAddressI18n,
+                contactPhone,
+                contactEmail,
+                whatsappPhone,
+                whatsappUrl,
+                socialLinks,
                 "heroSlides": coalesce(heroSlides, [])[] | order(coalesce(order, 999) asc) {
-                    alt,
-                    altI18n,
-                    eyebrow,
-                    eyebrowI18n,
-                    title,
-                    titleI18n,
-                    description,
-                    descriptionI18n,
-                    primaryLabel,
-                    primaryLabelI18n,
+                    href,
                     primaryHref,
-                    secondaryLabel,
-                    secondaryLabelI18n,
-                    secondaryHref,
-                    align,
                     image
                 }
             }
@@ -191,6 +193,16 @@ export function imageUrlFor(source: unknown, width = 1200, height = 1500): strin
 
     try {
         return builder.image(source).width(width).height(height).fit("crop").auto("format").url();
+    } catch {
+        return undefined;
+    }
+}
+
+export function imageUrlForContain(source: unknown, width = 1920): string | undefined {
+    if (!builder || !source) return undefined;
+
+    try {
+        return builder.image(source).width(width).auto("format").url();
     } catch {
         return undefined;
     }
