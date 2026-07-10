@@ -30,6 +30,11 @@ const socialMeta: Record<SocialKey, { name: string; icon: string }> = {
     github: { name: "GitHub", icon: "lucide:github" },
 };
 
+const fallbackContactSubtitle: Record<Locale, string> = {
+    en: "Leave us a message and we will get back to you shortly. Our team is ready to provide personalized advice and guide you through every step of the process.",
+    zh: "给我们留言，我们会尽快回复您。我们的团队随时准备为您提供个性化建议，并在每一个步骤中为您提供指导。",
+};
+
 function normalizeWhatsappUrl(phone: string | null | undefined) {
     const digits = phone?.replace(/\D/g, "");
     return digits ? `https://wa.me/${digits}` : undefined;
@@ -43,6 +48,7 @@ function externalUrl(value: string | null | undefined) {
 export async function getSiteSettings(locale: Locale = defaultLocale): Promise<SiteSettingsView> {
     const settings = await fetchSanitySiteSettings();
     const copy = ui[locale];
+    const contactPageCopy = "contactPage" in copy ? copy.contactPage : undefined;
     const whatsappPhone = settings?.whatsappPhone?.trim() ?? "";
     const whatsappUrl = normalizeWhatsappUrl(whatsappPhone) ?? externalUrl(settings?.whatsappUrl);
 
@@ -73,7 +79,7 @@ export async function getSiteSettings(locale: Locale = defaultLocale): Promise<S
             settings?.contactSubtitle,
             settings?.contactSubtitleI18n,
             locale,
-            copy.contactPage.subtitle,
+            contactPageCopy?.subtitle ?? fallbackContactSubtitle[locale],
         ),
         contactAddress: pickLocalized(
             settings?.contactAddress,
