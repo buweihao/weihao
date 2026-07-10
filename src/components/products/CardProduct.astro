@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import { defaultLocale, isLocale, localePath } from "../../lib/i18n";
+import { defaultLocale, isLocale, localePath, ui } from "../../lib/i18n";
 
 interface Props {
     title: string;
@@ -14,14 +14,17 @@ const { title, price, images, stock, slug } = Astro.props;
 const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
 const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
 const productHref = localePath(currentLocale, `/product/${slug}`);
+const copy = ui[currentLocale].product;
 ---
 
 <div
-    class="card bg-base-100 shadow-sm hover:shadow-xl transition-shadow duration-300 group relative rounded-xl overflow-hidden border border-base-200"
+    class="card bg-base-100 shadow-sm hover:shadow-xl transition-shadow duration-300 group relative rounded-xl overflow-hidden border border-base-200 cursor-pointer"
+    data-product-card
+    data-product-href={productHref}
 >
     <!-- Action Buttons -->
     <div
-        class="absolute top-3 right-3 z-20 flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out"
+        class="absolute top-3 right-3 z-[60] flex flex-col gap-2 translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300 ease-in-out"
     >
         <button
             class="add-to-favorite-btn btn btn-circle btn-sm bg-white hover:bg-primary hover:text-white border-none shadow-md"
@@ -59,7 +62,7 @@ const productHref = localePath(currentLocale, `/product/${slug}`);
     <div
         class="relative w-full aspect-4/5 bg-gray-100 overflow-hidden group/slider"
     >
-        <div class="swiper product-swiper w-full h-full">
+        <div class="swiper product-swiper w-full h-full pointer-events-none">
             <div class="swiper-wrapper">
                 {
                     images.map((img) => (
@@ -80,14 +83,14 @@ const productHref = localePath(currentLocale, `/product/${slug}`);
 
         <!-- Navigation Arrows -->
         <button
-            class="swiper-prev-btn absolute left-2 top-1/2 -translate-y-1/2 z-30 btn btn-circle btn-sm bg-white hover:bg-primary hover:text-white border-none shadow-md opacity-0 group-hover/slider:opacity-100 transition-all duration-300 -translate-x-4 group-hover/slider:translate-x-0"
+            class="swiper-prev-btn absolute left-2 top-1/2 -translate-y-1/2 z-[60] btn btn-circle btn-sm bg-white hover:bg-primary hover:text-white border-none shadow-md opacity-0 group-hover/slider:opacity-100 transition-all duration-300 -translate-x-4 group-hover/slider:translate-x-0"
             aria-label="Previous Image"
             onclick="event.preventDefault(); event.stopPropagation();"
         >
             <Icon name="lucide:chevron-left" class="w-4 h-4" />
         </button>
         <button
-            class="swiper-next-btn absolute right-2 top-1/2 -translate-y-1/2 z-30 btn btn-circle btn-sm bg-white hover:bg-primary hover:text-white border-none shadow-md opacity-0 group-hover/slider:opacity-100 transition-all duration-300 translate-x-4 group-hover/slider:translate-x-0"
+            class="swiper-next-btn absolute right-2 top-1/2 -translate-y-1/2 z-[60] btn btn-circle btn-sm bg-white hover:bg-primary hover:text-white border-none shadow-md opacity-0 group-hover/slider:opacity-100 transition-all duration-300 translate-x-4 group-hover/slider:translate-x-0"
             aria-label="Next Image"
             onclick="event.preventDefault(); event.stopPropagation();"
         >
@@ -97,7 +100,7 @@ const productHref = localePath(currentLocale, `/product/${slug}`);
         <!-- Link Overlay -->
         <a
             href={productHref}
-            class="absolute inset-0 z-10"
+            class="absolute inset-0 z-50 block"
             aria-label={`View ${title}`}></a>
     </div>
 
@@ -121,12 +124,12 @@ const productHref = localePath(currentLocale, `/product/${slug}`);
                     stock > 0 ? (
                         <span class="text-success flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full bg-success" />
-                            In Stock
+                            {copy.inStock}
                         </span>
                     ) : (
                         <span class="text-error flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full bg-error" />
-                            Out of Stock
+                            {copy.outOfStock}
                         </span>
                     )
                 }
@@ -162,6 +165,8 @@ const productHref = localePath(currentLocale, `/product/${slug}`);
             new Swiper(swiperEl as HTMLElement, {
                 modules: [Pagination, Navigation],
                 loop: true,
+                preventClicks: false,
+                preventClicksPropagation: false,
                 pagination: {
                     el: swiperEl.querySelector(
                         ".swiper-pagination",
@@ -177,6 +182,26 @@ const productHref = localePath(currentLocale, `/product/${slug}`);
                 observer: true,
                 observeParents: true,
             });
+        });
+
+        const productCards = document.querySelectorAll("[data-product-card]");
+        productCards.forEach((card) => {
+            if (card.getAttribute("data-card-listener")) return;
+
+            card.addEventListener("click", (event) => {
+                const target = event.target as HTMLElement | null;
+                if (
+                    target?.closest("a") ||
+                    target?.closest("button") ||
+                    target?.closest(".swiper-pagination")
+                ) {
+                    return;
+                }
+
+                const href = (card as HTMLElement).dataset.productHref;
+                if (href) window.location.href = href;
+            });
+            card.setAttribute("data-card-listener", "true");
         });
 
         // Add to cart buttons setup

@@ -1,5 +1,9 @@
 ---
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
 
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const copy = ui[currentLocale].contact;
 ---
 
 <form class="w-full" id="contact-form" action="/api/contact" method="post">
@@ -7,7 +11,7 @@
         <!-- First Name -->
         <div class="flex flex-col">
             <label for="firstName" class="font-semibold text-[#0B2545] mb-2">
-                First Name
+                {copy.firstName}
             </label>
             <input
                 type="text"
@@ -22,7 +26,7 @@
         <!-- Last Name -->
         <div class="flex flex-col">
             <label for="lastName" class="font-semibold text-[#0B2545] mb-2">
-                Last Name
+                {copy.lastName}
             </label>
             <input
                 type="text"
@@ -37,7 +41,7 @@
         <!-- Email -->
         <div class="flex flex-col">
             <label for="email" class="font-semibold text-[#0B2545] mb-2">
-                Email
+                {copy.email}
             </label>
             <input
                 type="email"
@@ -52,7 +56,7 @@
         <!-- Phone -->
         <div class="flex flex-col">
             <label for="phone" class="font-semibold text-[#0B2545] mb-2">
-                Phone
+                {copy.phone}
             </label>
             <input
                 type="tel"
@@ -67,7 +71,7 @@
     <!-- Message -->
     <div class="flex flex-col mt-6">
         <label for="message" class="font-semibold text-[#0B2545] mb-2">
-            Message
+            {copy.message}
         </label>
         <textarea
             id="message"
@@ -88,7 +92,7 @@
             id="contact-submit"
             class="bg-primary text-primary-content hover:bg-primary/90 font-bold px-12 py-4 rounded-full cursor-pointer transition text-lg shadow-lg hover:shadow-xl hover:scale-105 transform duration-200"
         >
-            Send Message
+            {copy.send}
         </button>
     </div>
 
@@ -96,7 +100,7 @@
     </p>
 </form>
 
-<script>
+<script define:vars={{ sendingMsg: copy.sending, successMsg: copy.success }}>
     function initContactForm() {
         const form = document.getElementById("contact-form") as HTMLFormElement | null;
         const status = document.getElementById("contact-status");
@@ -113,7 +117,7 @@
             if (!submit || !status) return;
 
             submit.disabled = true;
-            status.textContent = "Sending...";
+            status.textContent = sendingMsg;
             status.className = "mt-4 text-sm font-semibold text-slate-600";
 
             const formData = new FormData(form);
@@ -142,7 +146,7 @@
                 }
 
                 form.reset();
-                status.textContent = "Message sent. We will reply shortly.";
+                status.textContent = successMsg;
                 status.className = "mt-4 text-sm font-semibold text-emerald-600";
             } catch (error) {
                 status.textContent =

@@ -125,6 +125,39 @@ export const ui = {
                 secondaryLabel: "Accessories",
             },
         ],
+        product: {
+            inStock: "In Stock",
+            outOfStock: "Out of Stock",
+            addToCart: "Add to Cart",
+            buyNow: "Buy Now",
+            description: "Description",
+            noDescription: "No description available for this product at this time.",
+            save: "Save",
+            certifiedWarranty: "Certified Warranty",
+            insuredShipping: "Insured Shipping 24/48h",
+            relatedProducts: "Related Products"
+        },
+        cart: {
+            title: "Your Cart",
+            empty: "Your cart is empty",
+            empty_desc: "It looks like you haven't found that special tone yet. Explore our collection.",
+            total: "Total",
+            checkout: "Checkout",
+            viewCart: "View Cart"
+        },
+        contact: {
+            title: "Contact Us",
+            sendUsMessage: "Send us a message",
+            firstName: "First Name",
+            lastName: "Last Name",
+            email: "Email",
+            phone: "Phone",
+            subject: "Subject",
+            message: "Message",
+            send: "Send Message",
+            sending: "Sending...",
+            success: "Message sent successfully!"
+        }
     },
     zh: {
         siteTitle: "E-COMMER | Astro",
@@ -184,5 +217,38 @@ export const ui = {
                 secondaryLabel: "查看配件",
             },
         ],
+        product: {
+            inStock: "有货",
+            outOfStock: "缺货",
+            addToCart: "加入购物车",
+            buyNow: "立即购买",
+            description: "产品描述",
+            noDescription: "暂无产品描述。",
+            save: "立省",
+            certifiedWarranty: "官方质保",
+            insuredShipping: "24/48小时极速发货",
+            relatedProducts: "相关产品"
+        },
+        cart: {
+            title: "您的购物车",
+            empty: "您的购物车是空的",
+            empty_desc: "去看看有没有需要补充的装备吧！",
+            total: "总计",
+            checkout: "去结算",
+            viewCart: "查看购物车"
+        },
+        contact: {
+            title: "联系我们",
+            sendUsMessage: "发送消息",
+            firstName: "名字",
+            lastName: "姓氏",
+            email: "电子邮箱",
+            phone: "电话号码",
+            subject: "主题",
+            message: "留言内容",
+            send: "发送",
+            sending: "发送中...",
+            success: "消息发送成功！"
+        }
     },
 } as const;
