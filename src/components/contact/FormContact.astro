@@ -6,7 +6,7 @@ const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
 const copy = ui[currentLocale].contact;
 ---
 
-<form class="w-full" id="contact-form" action="/api/contact" method="post">
+<form class="w-full" id="contact-form" action="/api/contact" method="post" data-sending-msg={copy.sending} data-success-msg={copy.success}>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- First Name -->
         <div class="flex flex-col">
@@ -100,7 +100,7 @@ const copy = ui[currentLocale].contact;
     </p>
 </form>
 
-<script define:vars={{ sendingMsg: copy.sending, successMsg: copy.success }}>
+<script>
     function initContactForm() {
         const form = document.getElementById("contact-form") as HTMLFormElement | null;
         const status = document.getElementById("contact-status");
@@ -117,7 +117,7 @@ const copy = ui[currentLocale].contact;
             if (!submit || !status) return;
 
             submit.disabled = true;
-            status.textContent = sendingMsg;
+            status.textContent = form.dataset.sendingMsg || "Sending...";
             status.className = "mt-4 text-sm font-semibold text-slate-600";
 
             const formData = new FormData(form);
@@ -146,7 +146,7 @@ const copy = ui[currentLocale].contact;
                 }
 
                 form.reset();
-                status.textContent = successMsg;
+                status.textContent = form.dataset.successMsg || "Message sent successfully!";
                 status.className = "mt-4 text-sm font-semibold text-emerald-600";
             } catch (error) {
                 status.textContent =
