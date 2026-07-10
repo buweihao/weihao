@@ -1,0 +1,24 @@
+{
+  "sanity": {
+    "enabled": true,
+    "projectId": "",
+    "dataset": "production",
+    "apiVersion": "2026-07-03",
+    "studioPath": "/admin",
+    "documentTypes": ["atelierProduct", "category", "siteSettings"],
+    "webhookFilterHint": "_type in [\"atelierProduct\", \"category\", \"siteSettings\"] && !(_id in path(\"drafts.**\"))",
+    "corsOrigins": [
+      "http://localhost:4321",
+      "https://example.com"
+    ],
+    "webhookToCloudflare": true
+  },
+  "inquiry": {
+    "enabled": true,
+    "mode": "email-only",
+    "emailProvider": "resend",
+    "endpoint": "/api/contact",
+    "providerSecretName": "RESEND_API_KEY",
+    "requiresWebSetup": true
+  }
+}

@@ -1,6 +1,9 @@
 ---
 import CategoryCardHome from "./CategoryCardHome.astro";
-import { categories, featuredLinks } from "../../data/home.ts";
+import { getCatalogCategories } from "../../data/catalog";
+import { featuredLinks } from "../../data/home.ts";
+
+const categories = await getCatalogCategories();
 ---
 
 <section class="py-10 bg-white">

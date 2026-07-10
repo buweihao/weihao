@@ -4,9 +4,15 @@ import Breadcrumbs from "../../components/ui/Breadcrumbs.astro";
 import ProductGallery from "../../components/products/ProductGallery.astro";
 import ProductInfo from "../../components/products/ProductInfo.astro";
 import CardProduct from "../../components/products/CardProduct.astro";
-import { products, getRelatedProducts } from "../../data/products";
+import {
+    getCatalogProducts,
+    getRelatedProductsFromList,
+    slugifyCategory,
+} from "../../data/catalog";
 
 export async function getStaticPaths() {
+    const products = await getCatalogProducts();
+
     return products.map((product) => ({
         params: { slug: product.slug },
         props: { product },
@@ -14,13 +20,18 @@ export async function getStaticPaths() {
 }
 
 const { product } = Astro.props;
-const relatedProducts = getRelatedProducts(product.category, product.slug);
+const products = await getCatalogProducts();
+const relatedProducts = getRelatedProductsFromList(
+    products,
+    product.category,
+    product.slug,
+);
 
 const breadcrumbItems = [
     { label: "Home", href: "/" },
     {
         label: product.category,
-        href: `/category/${product.category.toLowerCase()}`,
+        href: `/category/${slugifyCategory(product.category)}`,
     },
     { label: product.name },
 ];

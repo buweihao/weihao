@@ -1,9 +1,10 @@
 ---
-import { products } from "../../data/products";
+import { getCatalogProducts } from "../../data/catalog";
 import CardProduct from "../products/CardProduct.astro";
 import Pagination from "../ui/Pagination.astro";
 
 const ITEMS_PER_PAGE = 8;
+const products = await getCatalogProducts();
 const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 ---
 
