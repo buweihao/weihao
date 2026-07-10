@@ -12,27 +12,17 @@ const copy = ui[currentLocale];
 const categories = [
     { name: copy.nav.home, href: localePath(currentLocale, "/") },
     {
-        name: copy.nav.computers,
-        href: localePath(currentLocale, "/category/computers"),
+        name: copy.nav.products,
+        href: localePath(currentLocale, "/category/all"),
         subcategories: [
-            { name: copy.nav.all, href: localePath(currentLocale, "/category/computers") },
-            { name: copy.nav.notebooks, href: localePath(currentLocale, "/category/computers?sub=notebooks") },
-            { name: copy.nav.keyboards, href: localePath(currentLocale, "/category/computers?sub=keyboards") },
-            { name: copy.nav.monitors, href: localePath(currentLocale, "/category/computers?sub=monitors") },
+            { name: copy.nav.cleansing, href: localePath(currentLocale, "/category/cleansing") },
+            { name: copy.nav.hydrating, href: localePath(currentLocale, "/category/hydrating") },
+            { name: copy.nav.sunscreen, href: localePath(currentLocale, "/category/sunscreen") },
+            { name: copy.nav.antiAging, href: localePath(currentLocale, "/category/anti-aging") },
         ],
     },
-    {
-        name: copy.nav.phones,
-        href: localePath(currentLocale, "/category/phones"),
-        subcategories: [
-            { name: copy.nav.all, href: localePath(currentLocale, "/category/phones") },
-            { name: copy.nav.android, href: localePath(currentLocale, "/category/phones?sub=android") },
-            { name: copy.nav.iphone, href: localePath(currentLocale, "/category/phones?sub=iphone") },
-            { name: copy.nav.accessories, href: localePath(currentLocale, "/category/accessories") },
-        ],
-    },
-    { name: copy.nav.audio, href: localePath(currentLocale, "/category/audio") },
-    { name: copy.nav.accessories, href: localePath(currentLocale, "/category/accessories") },
+    { name: copy.nav.about, href: localePath(currentLocale, "/about") },
+    { name: copy.nav.contact, href: localePath(currentLocale, "/contact") },
 ];
 ---
 
@@ -112,21 +102,6 @@ const categories = [
 
         <!-- Desktop: Right Side -->
         <div class="hidden sm:flex h-full items-center">
-            <a
-                href={localePath(currentLocale, "/about")}
-                class="flex items-center h-full px-4 hover:bg-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
-                >{copy.nav.about}</a
-            >
-            <a
-                href={localePath(currentLocale, "/blog")}
-                class="flex items-center h-full px-4 hover:bg-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
-                >{copy.nav.blog}</a
-            >
-            <a
-                href={localePath(currentLocale, "/contact")}
-                class="flex items-center h-full px-4 hover:bg-white/10 text-white/90 hover:text-white transition-all cursor-pointer"
-                >{copy.nav.contact}</a
-            >
         </div>
     </div>
 
@@ -170,16 +145,6 @@ const categories = [
             >
                 {copy.moreInfo}
             </div>
-            <a
-                href={localePath(currentLocale, "/about")}
-                class="py-3 px-6 hover:bg-white/10 border-b border-white/5 transition-colors"
-                >{copy.nav.aboutUs}</a
-            >
-            <a
-                href={localePath(currentLocale, "/blog")}
-                class="py-3 px-6 hover:bg-white/10 border-b border-white/5 transition-colors"
-                >{copy.nav.ourBlog}</a
-            >
         </div>
     </div>
 </div>
