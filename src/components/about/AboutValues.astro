@@ -1,23 +1,28 @@
 ---
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
 import AboutCard from "./AboutCard.astro";
+const copy = ui[currentLocale].about;
 
 const values = [
     {
-        title: "Uncompromising Quality",
+        title: copy.value1Title,
         description:
-            "We only partner with brands that meet our rigorous standards for performance, durability, and design.",
+            copy.value1Desc,
         icon: "lucide:award",
     },
     {
-        title: "Fast Global Shipping",
+        title: copy.value2Title,
         description:
-            "State-of-the-art logistics to ensure your premium tech reaches you safely and quickly, anywhere in the world.",
+            copy.value2Desc,
         icon: "lucide:truck",
     },
     {
-        title: "Expert Support",
+        title: copy.value3Title,
         description:
-            "Our team of tech specialists is available 24/7 to help you find the perfect device for your needs.",
+            copy.value3Desc,
         icon: "lucide:headset",
     },
 ];
@@ -28,12 +33,12 @@ const values = [
         <div class="text-center max-w-2xl mx-auto mb-16">
             <span
                 class="text-primary font-bold uppercase tracking-widest text-sm mb-4 block"
-                >Our Values</span
+                >{copy.valuesTitle}</span
             >
             <h2
                 class="text-3xl md:text-5xl font-black text-slate-900 uppercase"
             >
-                What Drives Us Forward
+                {copy.valuesHeading}
             </h2>
         </div>
 

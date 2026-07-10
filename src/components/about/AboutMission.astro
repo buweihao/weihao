@@ -1,4 +1,10 @@
 ---
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const copy = ui[currentLocale].about;
+
 
 ---
 
@@ -8,32 +14,24 @@
             <div class="order-2 md:order-1">
                 <span
                     class="text-primary font-bold uppercase tracking-widest text-sm mb-4 block"
-                    >Our Mission</span
+                    >{copy.missionTitle}</span
                 >
                 <h2
                     class="text-3xl md:text-5xl font-black text-slate-900 uppercase mb-6 leading-tight"
                 >
-                    Redefining Premium <br /> Tech Access
+                    {copy.missionHeading}
                 </h2>
                 <div
                     class="space-y-4 text-slate-600 leading-relaxed font-medium"
                 >
                     <p>
-                        Founded in 2024, our e-commerce platform was born from a
-                        simple idea: making high-end technology accessible to
-                        everyone who values quality and performance.
+                        {copy.missionP1}
                     </p>
                     <p>
-                        We believe that technology shouldn't just be a tool, but
-                        an extension of your creativity and professional life.
-                        That's why we meticulously curate every product in our
-                        catalog, from the latest laptops to the most advanced
-                        mobile devices.
+                        {copy.missionP2}
                     </p>
                     <p>
-                        Our commitment goes beyond selling; we strive to build a
-                        community of enthusiasts who demand nothing but the
-                        best.
+                        {copy.missionP3}
                     </p>
                 </div>
                 <div class="mt-8 flex gap-6">
@@ -43,7 +41,7 @@
                         >
                         <span
                             class="text-xs uppercase font-bold text-slate-400 tracking-wider"
-                            >Happy Clients</span
+                            >{copy.happyClients}</span
                         >
                     </div>
                     <div class="w-px h-12 bg-slate-200"></div>
@@ -53,7 +51,7 @@
                         >
                         <span
                             class="text-xs uppercase font-bold text-slate-400 tracking-wider"
-                            >Premium Products</span
+                            >{copy.premiumProducts}</span
                         >
                     </div>
                 </div>
