@@ -7,7 +7,6 @@ import CardProduct from "../../../components/products/CardProduct.astro";
 import {
     getCatalogProducts,
     getRelatedProductsFromList,
-    slugifyCategory,
 } from "../../../data/catalog";
 import { localePath, locales, type Locale } from "../../../lib/i18n";
 
@@ -39,7 +38,7 @@ const breadcrumbItems = [
     { label: "Home", href: localePath(lang, "/") },
     {
         label: product.category,
-        href: localePath(lang, `/category/${slugifyCategory(product.category)}`),
+        href: localePath(lang, `/products?type=${product.categorySlug}`),
     },
     { label: product.name },
 ];

@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import { localePath, type Locale, ui } from "../../lib/i18n";
+import { getCatalogCategories } from "../../data/catalog";
 
 type Props = {
     currentLocale: Locale;
@@ -8,17 +9,22 @@ type Props = {
 
 const { currentLocale } = Astro.props;
 const copy = ui[currentLocale];
+const productTypes = await getCatalogCategories(currentLocale);
 
 const categories = [
     { name: copy.nav.home, href: localePath(currentLocale, "/") },
     {
         name: copy.nav.products,
-        href: localePath(currentLocale, "/category/all"),
+        href: localePath(currentLocale, "/products"),
         subcategories: [
-            { name: copy.nav.cleansing, href: localePath(currentLocale, "/category/cleansing") },
-            { name: copy.nav.hydrating, href: localePath(currentLocale, "/category/hydrating") },
-            { name: copy.nav.sunscreen, href: localePath(currentLocale, "/category/sunscreen") },
-            { name: copy.nav.antiAging, href: localePath(currentLocale, "/category/anti-aging") },
+            {
+                name: currentLocale === "zh" ? "全部" : "All",
+                href: localePath(currentLocale, "/products"),
+            },
+            ...productTypes.map((type) => ({
+                name: type.name,
+                href: type.path,
+            })),
         ],
     },
     { name: copy.nav.about, href: localePath(currentLocale, "/about") },

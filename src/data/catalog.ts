@@ -5,6 +5,7 @@ import {
     fetchSanityProducts,
     fetchSanitySiteSettings,
     imageUrlFor,
+    imageUrlForContain,
     type SanityHeroSlide,
     type SanityProductDocument,
 } from "../lib/sanity";
@@ -24,21 +25,32 @@ export function slugifyCategory(value: string) {
 export type HeroSlide = {
     image: string;
     alt: string;
-    eyebrow: string;
-    title: string;
-    description: string;
-    primaryLabel: string;
-    primaryHref: string;
-    secondaryLabel?: string;
-    secondaryHref?: string;
-    align: "center" | "left";
+    href: string;
 };
+
+export type CatalogCategory = {
+    name: string;
+    image: string;
+    path: string;
+    slug: string;
+};
+
+function categorySlugFromPath(path: string, name: string) {
+    const typeParam = path.match(/[?&]type=([^&]+)/)?.[1];
+    return typeParam ?? path.split("/").filter(Boolean).at(-1) ?? slugifyCategory(name);
+}
 
 function normalizeProduct(doc: SanityProductDocument, index: number, locale: Locale): Product {
     const images =
         doc.images
             ?.map((image) => imageUrlFor(image.asset))
             .filter((url): url is string => Boolean(url)) ?? [];
+    const category = pickLocalized(
+        doc.productTypeName,
+        doc.productTypeNameI18n,
+        locale,
+        pickLocalized(doc.category, doc.categoryI18n, locale, "Products"),
+    );
 
     return {
         id: doc.id ?? doc.slug ?? String(index + 1),
@@ -46,7 +58,8 @@ function normalizeProduct(doc: SanityProductDocument, index: number, locale: Loc
         title: pickLocalized(doc.name, doc.nameI18n, locale, "Untitled product"),
         price: doc.price ?? 0,
         description: pickLocalized(doc.description, doc.descriptionI18n, locale),
-        category: pickLocalized(doc.category, doc.categoryI18n, locale, "Products"),
+        category,
+        categorySlug: doc.productTypeSlug ?? slugifyCategory(category),
         subcategory: pickLocalized(doc.subcategory, doc.subcategoryI18n, locale) || undefined,
         stock: doc.stock ?? 0,
         images: images.length ? images : [fallbackImage],
@@ -67,7 +80,10 @@ export async function getCatalogProducts(locale: Locale = defaultLocale): Promis
     const sanityProducts = await fetchSanityProducts();
 
     if (sanityProducts.length === 0) {
-        return localProducts;
+        return localProducts.map((product) => ({
+            ...product,
+            categorySlug: product.categorySlug ?? slugifyCategory(product.category),
+        }));
     }
 
     return sanityProducts.map((product, index) => normalizeProduct(product, index, locale));
@@ -77,54 +93,59 @@ export async function getCatalogCategories(locale: Locale = defaultLocale) {
     const sanityCategories = await fetchSanityCategories();
 
     if (sanityCategories.length === 0) {
-        return localCategories;
+        const sanityProducts = await fetchSanityProducts();
+        if (sanityProducts.length > 0) {
+            const products = sanityProducts.map((product, index) => normalizeProduct(product, index, locale));
+            const categoryMap = new Map<string, CatalogCategory>();
+
+            products.forEach((product) => {
+                const slug = product.categorySlug ?? slugifyCategory(product.category);
+                if (!categoryMap.has(slug)) {
+                    categoryMap.set(slug, {
+                        name: product.category,
+                        image: product.images[0] ?? fallbackImage,
+                        slug,
+                        path: localizedPath(`/products?type=${slug}`, locale),
+                    });
+                }
+            });
+
+            return Array.from(categoryMap.values());
+        }
+
+        return localCategories.map((category) => {
+            const slug = categorySlugFromPath(category.path, category.name);
+            return {
+                ...category,
+                slug,
+                path: localizedPath(`/products?type=${slug}`, locale),
+            };
+        });
     }
 
     return sanityCategories.map((category) => ({
         name: pickLocalized(category.name, category.nameI18n, locale, "Products"),
         image: imageUrlFor(category.image?.asset, 2000, 1000) ?? fallbackImage,
-        path: `/category/${category.slug ?? slugifyCategory(category.name ?? "products")}`,
-    }));
+        slug: category.slug ?? slugifyCategory(category.name ?? "products"),
+        path: localizedPath(`/products?type=${category.slug ?? slugifyCategory(category.name ?? "products")}`, locale),
+    })) satisfies CatalogCategory[];
 }
 
 function normalizeHeroSlide(slide: SanityHeroSlide, index: number, locale: Locale): HeroSlide {
     const fallback = ui[locale].heroFallback[index] ?? ui[locale].heroFallback[0];
-    const image = imageUrlFor(slide.image?.asset, 1920, 900) ?? fallbackImage;
-    const title = pickLocalized(slide.title, slide.titleI18n, locale, fallback.title);
+    const image = imageUrlForContain(slide.image?.asset, 1920) ?? fallbackImage;
+    const href = slide.href || slide.primaryHref || "/";
 
     return {
         image,
-        alt: pickLocalized(slide.alt, slide.altI18n, locale, title),
-        eyebrow: pickLocalized(slide.eyebrow, slide.eyebrowI18n, locale, fallback.eyebrow),
-        title,
-        description: pickLocalized(
-            slide.description,
-            slide.descriptionI18n,
-            locale,
-            fallback.description,
-        ),
-        primaryLabel: pickLocalized(
-            slide.primaryLabel,
-            slide.primaryLabelI18n,
-            locale,
-            fallback.primaryLabel,
-        ),
-        primaryHref: localizedPath(slide.primaryHref || "/category/computers", locale),
-        secondaryLabel:
-            pickLocalized(
-                slide.secondaryLabel,
-                slide.secondaryLabelI18n,
-                locale,
-                fallback.secondaryLabel ?? "",
-            ) || undefined,
-        secondaryHref: slide.secondaryHref ? localizedPath(slide.secondaryHref, locale) : undefined,
-        align: slide.align === "left" ? "left" : "center",
+        alt: fallback.title,
+        href: localizedPath(href, locale),
     };
 }
 
 export async function getHeroSlides(locale: Locale = defaultLocale): Promise<HeroSlide[]> {
     const settings = await fetchSanitySiteSettings();
-    const sanitySlides = settings?.heroSlides?.filter((slide) => slide.title || slide.titleI18n);
+    const sanitySlides = settings?.heroSlides?.filter((slide) => slide.image?.asset);
 
     if (sanitySlides?.length) {
         return sanitySlides.map((slide, index) => normalizeHeroSlide(slide, index, locale));
@@ -135,19 +156,12 @@ export async function getHeroSlides(locale: Locale = defaultLocale): Promise<Her
         "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=1920&auto=format&fit=crop",
         "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920&auto=format&fit=crop",
     ];
-    const fallbackHrefs = ["/category/computers?sub=notebooks", "/category/phones", "/category/accessories"];
+    const fallbackHrefs = ["/products?type=computers", "/products?type=phones", "/products?type=accessories"];
 
     return ui[locale].heroFallback.map((slide, index) => ({
         image: fallbackImages[index] ?? fallbackImage,
         alt: slide.title,
-        eyebrow: slide.eyebrow,
-        title: slide.title,
-        description: slide.description,
-        primaryLabel: slide.primaryLabel,
-        primaryHref: localizedPath(fallbackHrefs[index] ?? "/", locale),
-        secondaryLabel: slide.secondaryLabel,
-        secondaryHref: slide.secondaryLabel ? localizedPath("/category/accessories", locale) : undefined,
-        align: index === 1 ? "left" : "center",
+        href: localizedPath(fallbackHrefs[index] ?? "/", locale),
     }));
 }
 

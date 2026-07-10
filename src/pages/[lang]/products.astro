@@ -1,0 +1,15 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProductListingPage from "../../components/products/ProductListingPage.astro";
+import { locales, type Locale, ui } from "../../lib/i18n";
+
+export function getStaticPaths() {
+    return locales.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Locale };
+---
+
+<Layout title={`${ui[lang].nav.products} | E-COMMER`}>
+    <ProductListingPage locale={lang} />
+</Layout>

@@ -42,12 +42,20 @@ export const productType = defineType({
             validation: (rule) => rule.required(),
         }),
         defineField({
-            name: "category",
-            title: "Category",
-            type: "string",
+            name: "productType",
+            title: "Product type",
+            type: "reference",
+            to: [{ type: "category" }],
             validation: (rule) => rule.required(),
         }),
-        localizedString("categoryI18n", "Category translations"),
+        defineField({
+            name: "category",
+            title: "Legacy category",
+            type: "string",
+            description: "Kept only for older imported products. Use Product type for new products.",
+            hidden: true,
+        }),
+        localizedString("categoryI18n", "Legacy category translations"),
         defineField({
             name: "subcategory",
             title: "Subcategory",
@@ -131,7 +139,7 @@ export const productType = defineType({
     preview: {
         select: {
             title: "name",
-            subtitle: "category",
+            subtitle: "productType.name",
             media: "images.0",
         },
     },
