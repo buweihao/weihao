@@ -1,22 +1,11 @@
 ---
 import { Icon } from "astro-icon/components";
 import type { Locale } from "../../lib/i18n";
+import { getAnnouncementMessages } from "../../data/siteSettings";
 
 type Props = { currentLocale: Locale };
 const { currentLocale } = Astro.props;
-const announcementsEn = [
-  "Free Shipping on all orders over $50",
-  "Summer Sale: Up to 50% OFF selected items",
-  "12 Installments Interest-Free on Electronics",
-  "New Arrivals! Check out the latest Tech",
-];
-const announcementsZh = [
-  "订单满 $50 即享免运费",
-  "夏季促销：指定商品最高五折",
-  "电子产品支持 12 期免息",
-  "新品上市，探索最新产品",
-];
-const announcements = currentLocale === "zh" ? announcementsZh : announcementsEn;
+const announcements = await getAnnouncementMessages(currentLocale);
 ---
 
 <link

@@ -47,7 +47,10 @@ function categorySlugFromPath(path: string, name: string) {
 function normalizeProduct(doc: SanityProductDocument, index: number, locale: Locale): Product {
     const images =
         doc.images
-            ?.map((image) => imageUrlFor(image.asset))
+            // Product artwork must preserve its original aspect ratio. The generic
+            // imageUrlFor helper intentionally crops to a marketing-card ratio,
+            // which was cutting off square product images before they reached the gallery.
+            ?.map((image) => imageUrlForContain(image.asset, 1600))
             .filter((url): url is string => Boolean(url)) ?? [];
     let category = pickLocalized(
         doc.productTypeName,

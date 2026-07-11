@@ -70,6 +70,11 @@ export type SanitySiteSettings = {
     logo?: { asset?: unknown } | null;
     announcement?: string | null;
     announcementI18n?: Partial<Record<Locale, string | null>> | null;
+    announcementItems?: Array<{
+        textI18n?: Partial<Record<Locale, string | null>> | null;
+        enabled?: boolean | null;
+        order?: number | null;
+    }> | null;
     footerCopy?: string | null;
     footerCopyI18n?: Partial<Record<Locale, string | null>> | null;
     contactSubtitle?: string | null;
@@ -168,6 +173,11 @@ export async function fetchSanitySiteSettings(): Promise<SanitySiteSettings | nu
                 logo,
                 announcement,
                 announcementI18n,
+                "announcementItems": coalesce(announcementItems, [])[] | order(coalesce(order, 999) asc) {
+                    textI18n,
+                    enabled,
+                    order
+                },
                 footerCopy,
                 footerCopyI18n,
                 contactSubtitle,

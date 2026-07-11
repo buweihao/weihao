@@ -47,6 +47,46 @@ export const siteSettingsType = defineType({
         }),
         localizedString("announcementI18n", "Announcement translations"),
         defineField({
+            name: "announcementItems",
+            title: "Top announcement messages",
+            description: "Rotating messages shown in the black bar at the top of every page.",
+            type: "array",
+            of: [
+                defineArrayMember({
+                    type: "object",
+                    fields: [
+                        localizedString("textI18n", "Message"),
+                        defineField({
+                            name: "enabled",
+                            title: "Enabled",
+                            type: "boolean",
+                            initialValue: true,
+                        }),
+                        defineField({
+                            name: "order",
+                            title: "Sort order",
+                            type: "number",
+                            initialValue: 999,
+                        }),
+                    ],
+                    preview: {
+                        select: {
+                            en: "textI18n.en",
+                            zh: "textI18n.zh",
+                            enabled: "enabled",
+                            order: "order",
+                        },
+                        prepare({ en, zh, enabled, order }) {
+                            return {
+                                title: en || zh || "Untitled announcement",
+                                subtitle: `${enabled === false ? "Disabled" : "Enabled"} · Order ${order ?? 999}`,
+                            };
+                        },
+                    },
+                }),
+            ],
+        }),
+        defineField({
             name: "contactEmail",
             title: "Contact email",
             type: "string",

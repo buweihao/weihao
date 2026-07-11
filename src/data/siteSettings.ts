@@ -37,6 +37,21 @@ const fallbackContactSubtitle: Record<Locale, string> = {
     zh: "给我们留言，我们会尽快回复您。我们的团队随时准备为您提供个性化建议，并在每一个步骤中为您提供指导。",
 };
 
+const fallbackAnnouncements: Record<Locale, string[]> = {
+    en: [
+        "Free Shipping on all orders over $50",
+        "Summer Sale: Up to 50% OFF selected items",
+        "12 Installments Interest-Free on Electronics",
+        "New Arrivals! Check out the latest products",
+    ],
+    zh: [
+        "订单满 $50 即享免运费",
+        "夏季促销：指定商品最高五折",
+        "电子产品支持 12 期免息",
+        "新品上市，探索最新产品",
+    ],
+};
+
 function normalizeWhatsappUrl(phone: string | null | undefined) {
     const digits = phone?.replace(/\D/g, "");
     return digits ? `https://wa.me/${digits}` : undefined;
@@ -97,4 +112,17 @@ export async function getSiteSettings(locale: Locale = defaultLocale): Promise<S
         whatsappUrl,
         socialLinks,
     };
+}
+
+export async function getAnnouncementMessages(locale: Locale = defaultLocale): Promise<string[]> {
+    const settings = await fetchSanitySiteSettings();
+    const items = settings?.announcementItems
+        ?.filter((item) => item.enabled !== false)
+        .map((item) => pickLocalized(undefined, item.textI18n, locale).trim())
+        .filter(Boolean);
+
+    if (items?.length) return items;
+
+    const legacy = pickLocalized(settings?.announcement, settings?.announcementI18n, locale).trim();
+    return legacy ? [legacy] : fallbackAnnouncements[locale];
 }
