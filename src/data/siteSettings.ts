@@ -1,5 +1,5 @@
 import { defaultLocale, pickLocalized, type Locale, ui } from "../lib/i18n";
-import { fetchSanitySiteSettings } from "../lib/sanity";
+import { fetchSanitySiteSettings, imageUrlForContain } from "../lib/sanity";
 
 type SocialKey = "facebook" | "twitter" | "instagram" | "linkedin" | "youtube" | "github";
 
@@ -11,6 +11,8 @@ export type SocialLink = {
 };
 
 export type SiteSettingsView = {
+    brandName: string;
+    logoUrl?: string;
     footerCopy: string;
     contactSubtitle: string;
     contactAddress: string;
@@ -69,6 +71,8 @@ export async function getSiteSettings(locale: Locale = defaultLocale): Promise<S
     }
 
     return {
+        brandName: pickLocalized(settings?.title, settings?.titleI18n, locale, "E-COMMER"),
+        logoUrl: imageUrlForContain(settings?.logo?.asset, 160),
         footerCopy: pickLocalized(
             settings?.footerCopy,
             settings?.footerCopyI18n,

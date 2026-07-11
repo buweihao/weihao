@@ -65,6 +65,7 @@ export type SanityHeroSlide = {
 export type SanitySiteSettings = {
     title?: string | null;
     titleI18n?: Partial<Record<Locale, string | null>> | null;
+    logo?: { asset?: unknown } | null;
     announcement?: string | null;
     announcementI18n?: Partial<Record<Locale, string | null>> | null;
     footerCopy?: string | null;
@@ -160,6 +161,7 @@ export async function fetchSanitySiteSettings(): Promise<SanitySiteSettings | nu
             *[_type == "siteSettings"][0] {
                 title,
                 titleI18n,
+                logo,
                 announcement,
                 announcementI18n,
                 footerCopy,

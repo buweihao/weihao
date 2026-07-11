@@ -61,6 +61,15 @@ function normalizeProduct(doc: SanityProductDocument, index: number, locale: Loc
     else if (category === "sunscreen") category = ui[locale].nav.sunscreen;
     else if (category === "antiAging") category = ui[locale].nav.antiAging;
 
+    // Keep the filter key language-neutral. Chinese labels can contain no ASCII
+    // characters, so deriving the slug from the translated display name collapses
+    // unrelated categories into the generic `products` bucket.
+    const categorySlug =
+        doc.productTypeSlug?.trim() ||
+        slugifyCategory(doc.category ?? "") ||
+        slugifyCategory(doc.categoryI18n?.en ?? "") ||
+        "products";
+
     return {
         id: doc.id ?? doc.slug ?? String(index + 1),
         name: pickLocalized(doc.name, doc.nameI18n, locale, "Untitled product"),
@@ -68,7 +77,7 @@ function normalizeProduct(doc: SanityProductDocument, index: number, locale: Loc
         price: doc.price ?? 0,
         description: pickLocalized(doc.description, doc.descriptionI18n, locale),
         category,
-        categorySlug: doc.productTypeSlug?.trim() || slugifyCategory(category) || "products",
+        categorySlug,
         subcategory: pickLocalized(doc.subcategory, doc.subcategoryI18n, locale) || undefined,
         stock: doc.stock ?? 0,
         images: images.length ? images : [fallbackImage],

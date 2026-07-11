@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Salmon DNA Sodium Essence (High-End Edition)",
+    "nameZh": "三文鱼DNA钠精华液高定版",
+    "slug": "salmon-dna-essence-high-end",
+    "category": "antiAging",
+    "price": 399,
+    "description": "Deeply moisturizes, controls oil, shrinks pores, brightens skin tone, and nourishes the skin. Specifically formulated with PDRN for premium anti-aging care.",
+    "descriptionZh": "保湿，控油，收缩毛孔，补水保湿，提亮肤色，滋润，柔润肌肤。特别添加PDRN成分，提供卓越的抗初老与修护功效。",
+    "stock": 1000,
+    "discount": 0,
+    "imagePaths": [
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/SKU图.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/图片1.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/图片2.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/图片3.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/图片4.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/图片5.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/图片6.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN上架（尺寸已改）/图片7.png"
+    ]
+  },
+  {
+    "name": "Salmon PDRN Regular Essence",
+    "nameZh": "三文鱼PDRN常规版精华液",
+    "slug": "salmon-pdrn-regular-essence",
+    "category": "antiAging",
+    "price": 199,
+    "description": "Basic anti-aging and deep skin repair. Improves elasticity and restores youthful radiance to the skin.",
+    "descriptionZh": "基础抗初老，深度修护肌底，提升肌肤弹力与光泽，重塑年轻健康肌。",
+    "stock": 500,
+    "discount": 0,
+    "imagePaths": [
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/SKU图.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/图片1.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/图片2.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/图片3.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/图片4.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/图片5.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/图片6.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/三文鱼PDRN常规版/图片7.png"
+    ]
+  },
+  {
+    "name": "Exosome Freeze-Dried Powder",
+    "nameZh": "活细胞外泌体冻干粉",
+    "slug": "exosome-freeze-dried-powder",
+    "category": "antiAging",
+    "price": 599,
+    "description": "Advanced exosome technology provides intensive repair for aging and damaged cells, effectively restoring youthfulness.",
+    "descriptionZh": "顶尖外泌体技术，密集修护老化受损细胞，促进胶原蛋白再生，重塑年轻肌龄。",
+    "stock": 300,
+    "discount": 5,
+    "imagePaths": [
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/外泌体冻干上架/图片1.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/外泌体冻干上架/图片2.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/外泌体冻干上架/图片3.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/外泌体冻干上架/图片4.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/外泌体冻干上架/图片5.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/外泌体冻干上架/图片6.png"
+    ]
+  },
+  {
+    "name": "Elijaheli Collagen Hydrating Mask",
+    "nameZh": "Elijaheli胶原蛋白润肌面膜",
+    "slug": "elijaheli-collagen-hydrating-mask",
+    "category": "hydrating",
+    "price": 89,
+    "description": "Intensively hydrates, shrinks pores, and brightens the complexion. Leaves the skin smooth, nourished, and glowing.",
+    "descriptionZh": "收缩毛孔，补水保湿，提亮肤色，滋润，柔润肌肤。富含胶原蛋白成分，让肌肤焕发水润光泽。",
+    "stock": 2000,
+    "discount": 0,
+    "imagePaths": [
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/SKU图.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片1.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片1.1.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片2.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片3.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片4.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片5.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片6.png",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片7.jpg",
+      "/Users/boweihao/Downloads/b2b-site-launcher/weihao-sites/product/胶原蛋白面膜上线/图片8.jpg"
+    ]
+  }
+]

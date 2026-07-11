@@ -1,12 +1,22 @@
 ---
 import { Icon } from "astro-icon/components";
+import type { Locale } from "../../lib/i18n";
 
-const announcements = [
+type Props = { currentLocale: Locale };
+const { currentLocale } = Astro.props;
+const announcementsEn = [
   "Free Shipping on all orders over $50",
   "Summer Sale: Up to 50% OFF selected items",
   "12 Installments Interest-Free on Electronics",
   "New Arrivals! Check out the latest Tech",
 ];
+const announcementsZh = [
+  "订单满 $50 即享免运费",
+  "夏季促销：指定商品最高五折",
+  "电子产品支持 12 期免息",
+  "新品上市，探索最新产品",
+];
+const announcements = currentLocale === "zh" ? announcementsZh : announcementsEn;
 ---
 
 <link
@@ -34,7 +44,7 @@ const announcements = [
   <button
     id="announcement-close"
     class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-white/70 hover:text-white transition-colors cursor-pointer z-50 rounded-full hover:bg-white/10"
-    aria-label="Close announcement bar"
+    aria-label={currentLocale === "zh" ? "关闭公告栏" : "Close announcement bar"}
   >
     <Icon name="lucide:x" class="w-4 h-4" />
   </button>

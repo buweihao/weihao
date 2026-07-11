@@ -53,7 +53,7 @@ const xDefaultUrl = new URL(
 		>
 			{copy.skip}
 		</a>
-		<AnnouncementBar />
+		<AnnouncementBar currentLocale={currentLocale} />
 		<Navbar currentLocale={currentLocale} currentPath={Astro.url.pathname} />
 		<main id="main-content">
 			<slot />

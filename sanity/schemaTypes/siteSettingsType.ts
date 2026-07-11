@@ -34,6 +34,13 @@ export const siteSettingsType = defineType({
         }),
         localizedString("titleI18n", "Site title translations"),
         defineField({
+            name: "logo",
+            title: "Site logo",
+            type: "image",
+            description: "Shown beside the site name in the header and footer.",
+            options: { hotspot: true },
+        }),
+        defineField({
             name: "announcement",
             title: "Announcement bar",
             type: "string",

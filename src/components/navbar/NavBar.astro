@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import Links from "./Links.astro";
+import { getSiteSettings } from "../../data/siteSettings";
 import {
     localeLabels,
     localePath,
@@ -17,6 +18,7 @@ type Props = {
 
 const { currentLocale, currentPath } = Astro.props;
 const copy = ui[currentLocale];
+const siteSettings = await getSiteSettings(currentLocale);
 const pathWithoutLocale = stripLocale(currentPath);
 ---
 
@@ -29,18 +31,19 @@ const pathWithoutLocale = stripLocale(currentPath);
             <!-- Left Side: Logo -->
             <div class="navbar-start">
                 <a href={localePath(currentLocale, "/")} class="flex items-center gap-2 group">
-                    <div
-                        class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform shadow-sm"
-                    >
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform shadow-sm overflow-hidden">
+                        {siteSettings.logoUrl ? (
+                            <img src={siteSettings.logoUrl} alt={`${siteSettings.brandName} logo`} class="w-full h-full object-contain" />
+                        ) : (
                         <Icon
                             name="lucide:shopping-bag"
                             class="w-5 h-5 text-primary-content"
-                        />
+                        />)}
                     </div>
                     <span
                         class="text-xl font-bold tracking-tighter sm:text-2xl gradient-text"
                     >
-                        E-COMMER
+                        {siteSettings.brandName}
                     </span>
                 </a>
             </div>
@@ -93,7 +96,7 @@ const pathWithoutLocale = stripLocale(currentPath);
                 <button
                     id="cart-button"
                     class="btn btn-ghost btn-circle hover:bg-primary/10 transition-colors"
-                    aria-label={copy.cart}
+                    aria-label={copy.cart.title}
                 >
                     <div class="indicator">
                         <Icon

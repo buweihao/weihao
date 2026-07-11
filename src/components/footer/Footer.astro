@@ -20,18 +20,19 @@ const siteSettings = await getSiteSettings(currentLocale);
             <!-- Brand Section -->
             <div class="col-span-1 lg:col-span-1">
                 <a href={localePath(currentLocale, "/")} class="flex items-center gap-2 mb-6 group">
-                    <div
-                        class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg"
-                    >
+                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg overflow-hidden">
+                        {siteSettings.logoUrl ? (
+                            <img src={siteSettings.logoUrl} alt={`${siteSettings.brandName} logo`} class="w-full h-full object-contain" />
+                        ) : (
                         <Icon
                             name="lucide:shopping-bag"
                             class="w-6 h-6 text-primary-content"
-                        />
+                        />)}
                     </div>
                     <span
                         class="text-2xl font-bold tracking-tighter gradient-text"
                     >
-                        E-COMMER
+                        {siteSettings.brandName}
                     </span>
                 </a>
                 <p class="text-base-content/70 mb-6 leading-relaxed">
@@ -161,7 +162,7 @@ const siteSettings = await getSiteSettings(currentLocale);
             class="border-t border-base-content/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-base-content/50"
         >
             <p>
-                &copy; {new Date().getFullYear()} E-COMMER. {copy.footer.rights}
+                &copy; {new Date().getFullYear()} {siteSettings.brandName}. {copy.footer.rights}
             </p>
             <div class="flex gap-6">
                 <a href="#" class="hover:text-base-content transition-colors"

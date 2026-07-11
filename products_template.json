@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Gentle Cleansing Foam",
+    "nameZh": "氨基酸温和洁面慕斯",
+    "slug": "gentle-cleansing-foam-01",
+    "category": "cleansing",
+    "price": 129,
+    "description": "A soft and gentle foam that deeply cleanses pores without stripping moisture.",
+    "descriptionZh": "绵密云朵泡沫，深入清洁毛孔污垢，洗后肌肤水润不紧绷。",
+    "stock": 500,
+    "discount": 0,
+    "imagePaths": [
+      "./public/images/demo/cleanser1.jpg",
+      "./public/images/demo/cleanser2.jpg"
+    ]
+  },
+  {
+    "name": "Ultra Hydrating Serum",
+    "nameZh": "玻尿酸极光水光精华",
+    "slug": "ultra-hydrating-serum-01",
+    "category": "hydrating",
+    "price": 299,
+    "description": "Packed with hyaluronic acid for 24-hour deep hydration.",
+    "descriptionZh": "富含多重分子玻尿酸，24小时深层锁水保湿，令肌肤散发极光般透亮。",
+    "stock": 200,
+    "discount": 10,
+    "imagePaths": [
+      "./public/images/demo/serum1.jpg"
+    ]
+  }
+]

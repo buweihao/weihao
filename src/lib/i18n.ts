@@ -69,7 +69,6 @@ export const ui = {
         browse: "Browse",
         moreInfo: "More Info",
         favorites: "Favorites",
-        cart: "Shopping Cart",
         nav: {
             home: "Home",
             products: "Products",
@@ -194,7 +193,6 @@ export const ui = {
         browse: "浏览",
         moreInfo: "更多信息",
         favorites: "收藏",
-        cart: "购物车",
         nav: {
             home: "首页",
             products: "产品",
