@@ -29,6 +29,8 @@ export type SanityProductDocument = {
     price?: number | null;
     description?: string | null;
     descriptionI18n?: Partial<Record<Locale, string | null>> | null;
+    productDetail?: string | null;
+    productDetailI18n?: Partial<Record<Locale, string | null>> | null;
     productTypeName?: string | null;
     productTypeNameI18n?: Partial<Record<Locale, string | null>> | null;
     productTypeSlug?: string | null;
@@ -88,7 +90,7 @@ let siteSettingsRequest: Promise<SanitySiteSettings | null> | undefined;
 
 export async function fetchSanityProducts(): Promise<SanityProductDocument[]> {
     if (!sanityClient) return [];
-    if (productsRequest) return productsRequest;
+    if (productsRequest && !import.meta.env.DEV) return productsRequest;
 
     productsRequest = sanityClient
         .fetch<SanityProductDocument[]>(`
@@ -100,6 +102,8 @@ export async function fetchSanityProducts(): Promise<SanityProductDocument[]> {
                 price,
                 description,
                 descriptionI18n,
+                productDetail,
+                productDetailI18n,
                 "productTypeName": productType->name,
                 "productTypeNameI18n": productType->nameI18n,
                 "productTypeSlug": productType->slug.current,
@@ -133,7 +137,7 @@ export async function fetchSanityProducts(): Promise<SanityProductDocument[]> {
 
 export async function fetchSanityCategories(): Promise<SanityCategoryDocument[]> {
     if (!sanityClient) return [];
-    if (categoriesRequest) return categoriesRequest;
+    if (categoriesRequest && !import.meta.env.DEV) return categoriesRequest;
 
     categoriesRequest = sanityClient
         .fetch<SanityCategoryDocument[]>(`
@@ -154,7 +158,7 @@ export async function fetchSanityCategories(): Promise<SanityCategoryDocument[]>
 
 export async function fetchSanitySiteSettings(): Promise<SanitySiteSettings | null> {
     if (!sanityClient) return null;
-    if (siteSettingsRequest) return siteSettingsRequest;
+    if (siteSettingsRequest && !import.meta.env.DEV) return siteSettingsRequest;
 
     siteSettingsRequest = sanityClient
         .fetch<SanitySiteSettings | null>(`

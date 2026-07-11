@@ -76,6 +76,14 @@ export const productType = defineType({
         }),
         localizedText("descriptionI18n", "Description translations"),
         defineField({
+            name: "productDetail",
+            title: "Product detail",
+            type: "text",
+            rows: 10,
+            description: "Detailed product content shown below the main product section.",
+        }),
+        localizedText("productDetailI18n", "Product detail translations"),
+        defineField({
             name: "stock",
             title: "Stock",
             type: "number",

@@ -76,6 +76,7 @@ function normalizeProduct(doc: SanityProductDocument, index: number, locale: Loc
         title: pickLocalized(doc.name, doc.nameI18n, locale, "Untitled product"),
         price: doc.price ?? 0,
         description: pickLocalized(doc.description, doc.descriptionI18n, locale),
+        productDetail: pickLocalized(doc.productDetail, doc.productDetailI18n, locale),
         category,
         categorySlug,
         subcategory: pickLocalized(doc.subcategory, doc.subcategoryI18n, locale) || undefined,

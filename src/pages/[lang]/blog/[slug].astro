@@ -1,12 +1,12 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import { blogPosts } from "../../../data/blogData";
+import { getBlogPosts } from "../../../data/blogData";
 import Breadcrumbs from "../../../components/ui/Breadcrumbs.astro";
 import { locales, localePath } from "../../../lib/i18n";
 
 export function getStaticPaths() {
   return locales.flatMap((lang) =>
-    blogPosts.map((post) => ({
+    getBlogPosts(lang).map((post) => ({
       params: { lang, slug: post.slug },
       props: { post, lang },
     })),
@@ -14,6 +14,7 @@ export function getStaticPaths() {
 }
 
 const { post, lang } = Astro.props;
+const blogPosts = getBlogPosts(lang);
 const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
 ---
 
@@ -22,8 +23,8 @@ const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
     <div class="mb-8">
       <Breadcrumbs
         items={[
-          { label: "Home", href: localePath(lang, "/") },
-          { label: "Blog", href: localePath(lang, "/blog") },
+          { label: lang === "zh" ? "首页" : "Home", href: localePath(lang, "/") },
+          { label: lang === "zh" ? "博客" : "Blog", href: localePath(lang, "/blog") },
           {
             label: post.title.substring(0, 20) + "...",
             href: Astro.url.pathname,
@@ -61,7 +62,7 @@ const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
 
     <div class="mt-12 pt-8 border-t border-base-200">
       <a href={localePath(lang, "/blog")} class="btn btn-outline btn-primary rounded-full gap-2">
-        Back to Blog
+        {lang === "zh" ? "返回博客" : "Back to Blog"}
       </a>
     </div>
 
@@ -69,7 +70,7 @@ const relatedPosts = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
       relatedPosts.length > 0 && (
         <section class="mt-20">
           <h2 class="text-3xl font-bold text-base-content mb-8 border-l-4 border-primary pl-4">
-            Related Articles
+            {lang === "zh" ? "相关文章" : "Related Articles"}
           </h2>
 
           <div class="grid gap-8 md:grid-cols-2">

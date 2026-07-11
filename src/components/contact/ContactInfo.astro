@@ -11,6 +11,17 @@ const siteSettings = await getSiteSettings(currentLocale);
 const telHref = `tel:${siteSettings.contactPhone.replace(/[^\d+]/g, "")}`;
 
 const contactDetails = [
+    ...(siteSettings.whatsappUrl
+        ? [
+              {
+                  icon: "lucide:message-circle",
+                  title: "WhatsApp",
+                  lines: [siteSettings.whatsappPhone || siteSettings.contactPhone],
+                  href: siteSettings.whatsappUrl,
+                  external: true,
+              },
+          ]
+        : []),
     {
         icon: "lucide:map-pin",
         title: copy.visitUs,
@@ -28,17 +39,6 @@ const contactDetails = [
         lines: [siteSettings.contactEmail],
         href: `mailto:${siteSettings.contactEmail}`,
     },
-    ...(siteSettings.whatsappUrl
-        ? [
-              {
-                  icon: "lucide:message-circle",
-                  title: "WhatsApp",
-                  lines: [siteSettings.whatsappPhone || siteSettings.contactPhone],
-                  href: siteSettings.whatsappUrl,
-                  external: true,
-              },
-          ]
-        : []),
 ];
 ---
 

@@ -5,6 +5,7 @@ import AnnouncementBar from "../components/ui/AnnouncementBar.astro";
 import Footer from "../components/footer/Footer.astro";
 import ToasterComponent from "../components/ui/ToasterComponent";
 import CartDrawer from "../components/cart/CartDrawer.astro";
+import FloatingContact from "../components/contact/FloatingContact.astro";
 import {
 	alternateLinks,
 	defaultLocale,
@@ -59,6 +60,7 @@ const xDefaultUrl = new URL(
 			<slot />
 		</main>
 		<Footer currentLocale={currentLocale} />
+		<FloatingContact />
 		<CartDrawer />
 		<ToasterComponent client:load />
 	</body>

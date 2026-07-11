@@ -18,7 +18,7 @@ const mainImage =
             id="main-product-image"
             src={mainImage}
             alt="Product View"
-            class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+            class="w-full h-full object-contain p-4 transition-all duration-700 group-hover:scale-[1.02]"
         />
     </div>
 
@@ -32,7 +32,7 @@ const mainImage =
                 >
                     <img
                         src={img}
-                        class="w-full h-full object-cover rounded-xl"
+                        class="w-full h-full object-contain rounded-xl"
                         alt={`Thumbnail ${index + 1}`}
                     />
                 </button>

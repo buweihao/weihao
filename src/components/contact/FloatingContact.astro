@@ -1,0 +1,100 @@
+---
+import { Icon } from "astro-icon/components";
+import FormContact from "./FormContact.astro";
+import { getSiteSettings } from "../../data/siteSettings";
+import { defaultLocale, isLocale } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const isZh = currentLocale === "zh";
+const settings = await getSiteSettings(currentLocale);
+
+const contacts = [
+    settings.contactPhone
+        ? { label: isZh ? "电话" : "Phone", value: settings.contactPhone, href: `tel:${settings.contactPhone.replace(/[^+\d]/g, "")}`, icon: "lucide:phone" }
+        : undefined,
+    settings.contactEmail
+        ? { label: isZh ? "邮箱" : "Email", value: settings.contactEmail, href: `mailto:${settings.contactEmail}`, icon: "lucide:mail" }
+        : undefined,
+    settings.whatsappUrl
+        ? { label: "WhatsApp", value: settings.whatsappPhone || "WhatsApp", href: settings.whatsappUrl, icon: "lucide:message-circle" }
+        : undefined,
+].filter(Boolean) as Array<{ label: string; value: string; href: string; icon: string }>;
+---
+
+<div class="floating-contact fixed bottom-5 right-4 sm:bottom-7 sm:right-7 z-[9998] flex flex-col items-end gap-4">
+    <div id="contact-rail" class="contact-rail hidden md:flex flex-col rounded-full bg-slate-950 p-2 shadow-2xl opacity-0 translate-y-4 pointer-events-none transition-all duration-300" aria-label={isZh ? "快捷联系方式" : "Quick contact methods"}>
+        {contacts.map((contact) => (
+            <a href={contact.href} target={contact.href.startsWith("http") ? "_blank" : undefined} rel={contact.href.startsWith("http") ? "noopener noreferrer" : undefined} class="group relative grid h-12 w-12 place-items-center rounded-full text-white transition hover:bg-primary" aria-label={`${contact.label}: ${contact.value}`}>
+                <Icon name={contact.icon} class="h-5 w-5" />
+                <span class="pointer-events-none absolute right-[calc(100%+12px)] top-1/2 -translate-y-1/2 whitespace-nowrap rounded-xl bg-slate-950 px-4 py-2 text-xs font-bold text-white opacity-0 shadow-xl transition group-hover:opacity-100 group-focus:opacity-100">
+                    <span class="text-primary">{contact.label}</span>
+                    <span class="ml-2">{contact.value}</span>
+                </span>
+            </a>
+        ))}
+    </div>
+
+    <button id="open-contact-dialog" type="button" class="flex items-center gap-3 rounded-full bg-slate-950 px-5 py-4 text-white shadow-2xl transition hover:-translate-y-1 hover:bg-primary sm:px-7" aria-haspopup="dialog" aria-controls="floating-contact-dialog" aria-expanded="false">
+        <Icon name="lucide:message-square-more" class="h-6 w-6" />
+        <span class="hidden text-sm font-black tracking-wide sm:inline">{isZh ? "在线留言" : "Leave A Message"}</span>
+    </button>
+</div>
+
+<div id="floating-contact-dialog" role="dialog" aria-labelledby="floating-contact-title" class="fixed bottom-24 right-4 z-[9999] hidden w-[calc(100%-2rem)] max-w-[420px] overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-2xl sm:bottom-28 sm:right-7">
+    <div class="max-h-[72vh] overflow-y-auto">
+        <header class="sticky top-0 z-10 flex items-center justify-between bg-primary px-5 py-3.5 text-primary-content">
+            <h2 id="floating-contact-title" class="text-base font-black sm:text-lg">{isZh ? "在线留言" : "Leave A Message"}</h2>
+            <button id="close-contact-dialog" type="button" class="grid h-8 w-8 place-items-center rounded-full transition hover:bg-black/10" aria-label={isZh ? "关闭留言窗口" : "Close contact form"}>
+                <Icon name="lucide:x" class="h-5 w-5" />
+            </button>
+        </header>
+        <div class="p-5 [&_label]:text-xs [&_input]:py-2 [&_textarea]:py-2">
+            <p class="mb-4 text-sm leading-6 text-slate-600">
+                {isZh ? "如果您对我们的产品感兴趣，请留言告诉我们您的需求，我们会尽快回复。" : "If you are interested in our products, leave your requirements here and our team will reply as soon as possible."}
+            </p>
+            <FormContact idPrefix="floating-contact" compact={true} />
+        </div>
+    </div>
+</div>
+
+<script>
+    function initFloatingContact() {
+        const dialog = document.getElementById("floating-contact-dialog");
+        const openButton = document.getElementById("open-contact-dialog");
+        const closeButton = document.getElementById("close-contact-dialog");
+        const rail = document.getElementById("contact-rail");
+        if (!dialog || !openButton || !closeButton || openButton.dataset.ready) return;
+        openButton.dataset.ready = "true";
+
+        const updateRail = () => {
+            const visible = window.scrollY > 420;
+            rail?.classList.toggle("opacity-0", !visible);
+            rail?.classList.toggle("translate-y-4", !visible);
+            rail?.classList.toggle("pointer-events-none", !visible);
+        };
+        openButton.addEventListener("click", () => {
+            const productName = document.querySelector(".product-info h1")?.textContent?.trim() || "";
+            const productInput = dialog.querySelector<HTMLInputElement>('input[name="productInterest"]');
+            if (productInput) productInput.value = productName;
+            const willOpen = dialog.classList.contains("hidden");
+            dialog.classList.toggle("hidden", !willOpen);
+            openButton.setAttribute("aria-expanded", String(willOpen));
+            rail?.classList.toggle("invisible", willOpen);
+        });
+        const closePanel = () => {
+            dialog.classList.add("hidden");
+            openButton.setAttribute("aria-expanded", "false");
+            rail?.classList.remove("invisible");
+            openButton.focus();
+        };
+        closeButton.addEventListener("click", closePanel);
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && !dialog.classList.contains("hidden")) closePanel();
+        });
+        window.addEventListener("scroll", updateRail, { passive: true });
+        updateRail();
+    }
+    initFloatingContact();
+    document.addEventListener("astro:page-load", initFloatingContact);
+</script>

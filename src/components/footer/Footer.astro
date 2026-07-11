@@ -103,7 +103,7 @@ const siteSettings = await getSiteSettings(currentLocale);
                 <ul class="space-y-4">
                     <li>
                         <a
-                            href="#"
+                            href={localePath(currentLocale, "/contact")}
                             class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
                             >{copy.footer.contactUs}</a
                         >

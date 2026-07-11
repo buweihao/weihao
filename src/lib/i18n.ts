@@ -134,7 +134,13 @@ export const ui = {
             save: "Save",
             certifiedWarranty: "Certified Warranty",
             insuredShipping: "Insured Shipping 24/48h",
-            relatedProducts: "Related Products"
+            relatedProducts: "Related Products",
+            productDetail: "Product Detail",
+            productDetailEmpty: "Detailed product information will be available soon.",
+            getInTouch: "Get in Touch",
+            inquiryIntro: "Tell us your requirements and our team will reply with product details, pricing, MOQ, and lead time.",
+            inquireNow: "Inquire Now",
+            whatsapp: "WhatsApp",
         },
         cart: {
             title: "Your Cart",
@@ -253,7 +259,13 @@ export const ui = {
             save: "立省",
             certifiedWarranty: "官方质保",
             insuredShipping: "24/48小时极速发货",
-            relatedProducts: "相关产品"
+            relatedProducts: "相关产品",
+            productDetail: "产品详情",
+            productDetailEmpty: "详细产品信息即将补充。",
+            getInTouch: "发送询盘",
+            inquiryIntro: "请告诉我们您的需求，我们的团队将回复产品资料、价格、起订量和交期。",
+            inquireNow: "立即询盘",
+            whatsapp: "WhatsApp",
         },
         cart: {
             title: "您的购物车",

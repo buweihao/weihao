@@ -4,6 +4,7 @@ export interface Product {
     title: string; // compatibility with home.ts
     price: number;
     description: string;
+    productDetail?: string;
     category: string;
     categorySlug?: string;
     subcategory?: string;

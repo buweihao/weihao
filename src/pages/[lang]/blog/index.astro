@@ -1,6 +1,6 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import { blogPosts } from "../../../data/blogData";
+import { getBlogPosts } from "../../../data/blogData";
 import BlogCard from "../../../components/blog/BlogCard.astro";
 import Breadcrumbs from "../../../components/ui/Breadcrumbs.astro";
 import Pagination from "../../../components/ui/Pagination.astro";
@@ -11,6 +11,7 @@ export function getStaticPaths() {
 }
 
 const { lang } = Astro.params;
+const blogPosts = getBlogPosts(lang);
 const url = new URL(Astro.request.url);
 const currentPage = parseInt(url.searchParams.get("page") || "1", 10);
 
@@ -27,19 +28,20 @@ const currentPosts = blogPosts.slice(start, end);
     <div class="mb-8">
       <Breadcrumbs
         items={[
-          { label: "Home", href: localePath(lang as any, "/") },
-          { label: "Blog", href: localePath(lang as any, "/blog") },
+          { label: lang === "zh" ? "首页" : "Home", href: localePath(lang as any, "/") },
+          { label: lang === "zh" ? "博客" : "Blog", href: localePath(lang as any, "/blog") },
         ]}
       />
     </div>
 
     <div class="text-center mb-16">
       <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-base-content">
-        Our <span class="text-primary">Blog</span>
+        {lang === "zh" ? "护肤" : "Our "}<span class="text-primary">{lang === "zh" ? "知识" : "Blog"}</span>
       </h1>
       <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
-        Stay up to date with the latest news, reviews and guides on technology
-        and gaming.
+        {lang === "zh"
+          ? "分享护肤成分、产品开发和生产质量管理相关知识。"
+          : "Explore skincare ingredients, product development, and manufacturing quality insights."}
       </p>
     </div>
 

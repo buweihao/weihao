@@ -4,160 +4,93 @@ import { defaultLocale, isLocale, ui } from "../../lib/i18n";
 const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
 const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
 const copy = ui[currentLocale].contact;
+type Props = { productInterest?: string; idPrefix?: string; compact?: boolean };
+const { productInterest = "", idPrefix = "contact", compact = false } = Astro.props;
+const fieldId = (name: string) => `${idPrefix}-${name}`;
+const placeholders = currentLocale === "zh"
+    ? { firstName: "名字", lastName: "姓氏", message: "请填写您的采购需求……" }
+    : { firstName: "First name", lastName: "Last name", message: "Write your inquiry here..." };
 ---
 
-<form class="w-full" id="contact-form" action="/api/contact" method="post" data-sending-msg={copy.sending} data-success-msg={copy.success}>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- First Name -->
+<form class="contact-form w-full" id={fieldId("form")} action="/api/contact" method="post" data-sending-msg={copy.sending} data-success-msg={copy.success}>
+    <div class:list={["grid grid-cols-1 gap-5", !compact && "md:grid-cols-2"]}>
         <div class="flex flex-col">
-            <label for="firstName" class="font-semibold text-[#0B2545] mb-2">
-                {copy.firstName}
-            </label>
-            <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                placeholder="Your first name"
-                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#F9C74F]"
-                required
-            />
+            <label for={fieldId("firstName")} class="font-semibold text-[#0B2545] mb-2">{copy.firstName}</label>
+            <input type="text" id={fieldId("firstName")} name="firstName" placeholder={placeholders.firstName} class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary" required />
         </div>
-
-        <!-- Last Name -->
         <div class="flex flex-col">
-            <label for="lastName" class="font-semibold text-[#0B2545] mb-2">
-                {copy.lastName}
-            </label>
-            <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                placeholder="Your last name"
-                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#F9C74F]"
-                required
-            />
+            <label for={fieldId("lastName")} class="font-semibold text-[#0B2545] mb-2">{copy.lastName}</label>
+            <input type="text" id={fieldId("lastName")} name="lastName" placeholder={placeholders.lastName} class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary" required />
         </div>
-
-        <!-- Email -->
         <div class="flex flex-col">
-            <label for="email" class="font-semibold text-[#0B2545] mb-2">
-                {copy.email}
-            </label>
-            <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="you@example.com"
-                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#F9C74F]"
-                required
-            />
+            <label for={fieldId("email")} class="font-semibold text-[#0B2545] mb-2">{copy.email}</label>
+            <input type="email" id={fieldId("email")} name="email" placeholder="you@example.com" class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary" required />
         </div>
-
-        <!-- Phone -->
         <div class="flex flex-col">
-            <label for="phone" class="font-semibold text-[#0B2545] mb-2">
-                {copy.phone}
-            </label>
-            <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="+1 555-555-5555"
-                class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#F9C74F]"
-            />
+            <label for={fieldId("phone")} class="font-semibold text-[#0B2545] mb-2">{copy.phone}</label>
+            <input type="tel" id={fieldId("phone")} name="phone" placeholder="Tel / WhatsApp" class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary" />
         </div>
     </div>
 
-    <!-- Message -->
-    <div class="flex flex-col mt-6">
-        <label for="message" class="font-semibold text-[#0B2545] mb-2">
-            {copy.message}
-        </label>
-        <textarea
-            id="message"
-            name="message"
-            rows="5"
-            placeholder="Write your inquiry here..."
-            class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#F9C74F] resize-none"
-            required></textarea>
+    <div class="flex flex-col mt-5">
+        <label for={fieldId("message")} class="font-semibold text-[#0B2545] mb-2">{copy.message}</label>
+        <textarea id={fieldId("message")} name="message" rows={compact ? 4 : 5} placeholder={placeholders.message} class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary resize-none" required></textarea>
     </div>
 
     <input type="text" name="website" class="hidden" tabindex="-1" autocomplete="off" />
     <input type="hidden" name="sourceUrl" value="" />
+    <input type="hidden" name="productInterest" value={productInterest} />
 
-    <!-- Button -->
-    <div class="text-center md:text-right mt-8">
-        <button
-            type="submit"
-            id="contact-submit"
-            class="bg-primary text-primary-content hover:bg-primary/90 font-bold px-12 py-4 rounded-full cursor-pointer transition text-lg shadow-lg hover:shadow-xl hover:scale-105 transform duration-200"
-        >
+    <div class:list={["mt-6", compact ? "text-left" : "text-center md:text-right"]}>
+        <button type="submit" class="bg-slate-950 text-white hover:bg-primary font-black px-9 py-4 rounded-xl cursor-pointer transition uppercase tracking-widest shadow-lg disabled:opacity-60">
             {copy.send}
         </button>
     </div>
-
-    <p id="contact-status" class="mt-4 text-sm font-semibold text-slate-600" role="status">
-    </p>
+    <p class="contact-status mt-4 text-sm font-semibold text-slate-600" role="status"></p>
 </form>
 
 <script>
-    function initContactForm() {
-        const form = document.getElementById("contact-form") as HTMLFormElement | null;
-        const status = document.getElementById("contact-status");
-        const submit = document.getElementById("contact-submit") as HTMLButtonElement | null;
+    function initContactForms() {
+        const forms = document.querySelectorAll<HTMLFormElement>(".contact-form:not([data-ready])");
+        forms.forEach((form) => {
+            form.dataset.ready = "true";
+            const status = form.querySelector<HTMLElement>(".contact-status");
+            const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+            const sourceUrl = form.querySelector<HTMLInputElement>('input[name="sourceUrl"]');
+            if (sourceUrl) sourceUrl.value = window.location.href;
 
-        if (!form || form.dataset.ready) return;
-        form.dataset.ready = "true";
-
-        const sourceUrl = form.querySelector('input[name="sourceUrl"]') as HTMLInputElement | null;
-        if (sourceUrl) sourceUrl.value = window.location.href;
-
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-            if (!submit || !status) return;
-
-            submit.disabled = true;
-            status.textContent = form.dataset.sendingMsg || "Sending...";
-            status.className = "mt-4 text-sm font-semibold text-slate-600";
-
-            const formData = new FormData(form);
-            const firstName = String(formData.get("firstName") || "").trim();
-            const lastName = String(formData.get("lastName") || "").trim();
-
-            const payload = {
-                name: [firstName, lastName].filter(Boolean).join(" "),
-                email: formData.get("email"),
-                phone: formData.get("phone"),
-                message: formData.get("message"),
-                website: formData.get("website"),
-                sourceUrl: formData.get("sourceUrl"),
-            };
-
-            try {
-                const response = await fetch(form.action, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
-                });
-                const result = await response.json().catch(() => ({}));
-
-                if (!response.ok || !result.ok) {
-                    throw new Error(result.error || "Unable to send message");
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                if (!submit || !status) return;
+                submit.disabled = true;
+                status.textContent = form.dataset.sendingMsg || "Sending...";
+                status.className = "contact-status mt-4 text-sm font-semibold text-slate-600";
+                const formData = new FormData(form);
+                const payload = {
+                    name: [formData.get("firstName"), formData.get("lastName")].filter(Boolean).join(" "),
+                    email: formData.get("email"),
+                    phone: formData.get("phone"),
+                    productInterest: formData.get("productInterest"),
+                    message: formData.get("message"),
+                    website: formData.get("website"),
+                    sourceUrl: formData.get("sourceUrl"),
+                };
+                try {
+                    const response = await fetch(form.action, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+                    const result = await response.json().catch(() => ({}));
+                    if (!response.ok || !result.ok) throw new Error(result.error || "Unable to send message");
+                    form.reset();
+                    status.textContent = form.dataset.successMsg || "Message sent successfully!";
+                    status.className = "contact-status mt-4 text-sm font-semibold text-emerald-600";
+                } catch (error) {
+                    status.textContent = error instanceof Error ? error.message : "Unable to send message";
+                    status.className = "contact-status mt-4 text-sm font-semibold text-red-600";
+                } finally {
+                    submit.disabled = false;
                 }
-
-                form.reset();
-                status.textContent = form.dataset.successMsg || "Message sent successfully!";
-                status.className = "mt-4 text-sm font-semibold text-emerald-600";
-            } catch (error) {
-                status.textContent =
-                    error instanceof Error ? error.message : "Unable to send message";
-                status.className = "mt-4 text-sm font-semibold text-red-600";
-            } finally {
-                submit.disabled = false;
-            }
+            });
         });
     }
-
-    initContactForm();
-    document.addEventListener("astro:page-load", initContactForm);
+    initContactForms();
+    document.addEventListener("astro:page-load", initContactForms);
 </script>
