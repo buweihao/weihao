@@ -6,6 +6,7 @@ import CardProduct from "../../components/products/CardProduct.astro";
 import {
     getCatalogCategories,
     getCatalogProducts,
+    isValidCategorySlug,
     slugifyCategory,
 } from "../../data/catalog";
 import { defaultLocale, localePath } from "../../lib/i18n";
@@ -14,24 +15,29 @@ export async function getStaticPaths() {
     const products = await getCatalogProducts(defaultLocale);
     const categories = await getCatalogCategories(defaultLocale);
     // Get unique categories from products
-    const uniqueCategories = [...new Set(products.map((p) => p.category))];
+    const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
 
-    return uniqueCategories.map((category) => {
-        const categoryData = categories.find(
-            (c) => c.name.toLowerCase() === category.toLowerCase(),
-        );
-        const categorySlug = slugifyCategory(category);
-        return {
-            params: { category: categorySlug },
-            props: {
-                categoryName: category,
-                categoryProducts: products.filter(
-                    (p) => p.category === category,
-                ),
-                image: categoryData?.image,
-            },
-        };
-    });
+    return uniqueCategories
+        .flatMap((category) => {
+            const categoryData = categories.find(
+                (c) => c.name.toLowerCase() === category.toLowerCase(),
+            );
+            const categorySlug =
+                categoryData?.slug?.trim() || slugifyCategory(category);
+
+            if (!isValidCategorySlug(categorySlug)) return [];
+
+            return [{
+                params: { category: categorySlug },
+                props: {
+                    categoryName: category,
+                    categoryProducts: products.filter(
+                        (p) => p.category === category,
+                    ),
+                    image: categoryData?.image,
+                },
+            }];
+        });
 }
 
 const { categoryName, categoryProducts, image } = Astro.props;

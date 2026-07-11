@@ -6,6 +6,7 @@ import CardProduct from "../../../components/products/CardProduct.astro";
 import {
     getCatalogCategories,
     getCatalogProducts,
+    isValidCategorySlug,
     slugifyCategory,
 } from "../../../data/catalog";
 import { localePath, locales, type Locale } from "../../../lib/i18n";
@@ -16,14 +17,19 @@ export async function getStaticPaths() {
     for (const lang of locales) {
         const products = await getCatalogProducts(lang);
         const categories = await getCatalogCategories(lang);
-        const uniqueCategories = [...new Set(products.map((p) => p.category))];
+        const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
 
         for (const category of uniqueCategories) {
             const categoryData = categories.find(
                 (c) => c.name.toLowerCase() === category.toLowerCase(),
             );
+            const categorySlug =
+                categoryData?.slug?.trim() || slugifyCategory(category);
+
+            if (!isValidCategorySlug(categorySlug)) continue;
+
             paths.push({
-                params: { lang, category: slugifyCategory(category) },
+                params: { lang, category: categorySlug },
                 props: {
                     lang,
                     categoryName: category,

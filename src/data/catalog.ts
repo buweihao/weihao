@@ -22,6 +22,10 @@ export function slugifyCategory(value: string) {
         .replace(/^-+|-+$/g, "");
 }
 
+export function isValidCategorySlug(value: string | null | undefined): value is string {
+    return Boolean(value?.trim());
+}
+
 export type HeroSlide = {
     image: string;
     alt: string;
@@ -64,7 +68,7 @@ function normalizeProduct(doc: SanityProductDocument, index: number, locale: Loc
         price: doc.price ?? 0,
         description: pickLocalized(doc.description, doc.descriptionI18n, locale),
         category,
-        categorySlug: doc.productTypeSlug ?? slugifyCategory(category),
+        categorySlug: doc.productTypeSlug?.trim() || slugifyCategory(category) || "products",
         subcategory: pickLocalized(doc.subcategory, doc.subcategoryI18n, locale) || undefined,
         stock: doc.stock ?? 0,
         images: images.length ? images : [fallbackImage],
@@ -104,7 +108,8 @@ export async function getCatalogCategories(locale: Locale = defaultLocale) {
             const categoryMap = new Map<string, CatalogCategory>();
 
             products.forEach((product) => {
-                const slug = product.categorySlug ?? slugifyCategory(product.category);
+                const slug = product.categorySlug?.trim() || slugifyCategory(product.category);
+                if (!isValidCategorySlug(slug)) return;
                 if (!categoryMap.has(slug)) {
                     categoryMap.set(slug, {
                         name: product.category,
@@ -118,22 +123,34 @@ export async function getCatalogCategories(locale: Locale = defaultLocale) {
             return Array.from(categoryMap.values());
         }
 
-        return localCategories.map((category) => {
-            const slug = categorySlugFromPath(category.path, category.name);
+        return localCategories
+            .map((category) => {
+                const slug = categorySlugFromPath(category.path, category.name);
+                if (!isValidCategorySlug(slug)) return undefined;
+
+                return {
+                    ...category,
+                    slug,
+                    path: localizedPath(`/products?type=${slug}`, locale),
+                };
+            })
+            .filter((category): category is CatalogCategory => Boolean(category));
+    }
+
+    return sanityCategories
+        .map((category) => {
+            const name = pickLocalized(category.name, category.nameI18n, locale, "Products");
+            const slug = category.slug?.trim() || slugifyCategory(name);
+            if (!isValidCategorySlug(slug)) return undefined;
+
             return {
-                ...category,
+                name,
+                image: imageUrlFor(category.image?.asset, 2000, 1000) ?? fallbackImage,
                 slug,
                 path: localizedPath(`/products?type=${slug}`, locale),
             };
-        });
-    }
-
-    return sanityCategories.map((category) => ({
-        name: pickLocalized(category.name, category.nameI18n, locale, "Products"),
-        image: imageUrlFor(category.image?.asset, 2000, 1000) ?? fallbackImage,
-        slug: category.slug ?? slugifyCategory(category.name ?? "products"),
-        path: localizedPath(`/products?type=${category.slug ?? slugifyCategory(category.name ?? "products")}`, locale),
-    })) satisfies CatalogCategory[];
+        })
+        .filter((category): category is CatalogCategory => Boolean(category));
 }
 
 function normalizeHeroSlide(slide: SanityHeroSlide, index: number, locale: Locale): HeroSlide {
