@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.7.3",
     "@iconify-json/lucide": "^1.2.86",
     "@iconify-json/mdi": "^1.2.3",
     "@nanostores/persistent": "^1.2.0",

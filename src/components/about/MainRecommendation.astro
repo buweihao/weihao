@@ -1,0 +1,57 @@
+---
+import { fetchSanityAboutRecommendation, imageUrlForContain } from "../../lib/sanity";
+import { defaultLocale, isLocale, pickLocalized } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const locale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const isZh = locale === "zh";
+const content = await fetchSanityAboutRecommendation();
+const items = (content?.items ?? []).slice(0, 9).map((item, index) => ({
+    src: imageUrlForContain(item.image?.asset, 1200),
+    alt: item.image?.alt || (isZh ? `主推产品 ${index + 1}` : `Recommended product ${index + 1}`),
+    text: pickLocalized(undefined, item.textI18n, locale),
+}));
+const placeholder = isZh ? "请在 Sanity 中添加推荐内容" : "Add recommendation content in Sanity";
+const columns = [items.filter((_, index) => index % 3 === 0), items.filter((_, index) => index % 3 === 1), items.filter((_, index) => index % 3 === 2)];
+---
+
+<section class="bg-white py-14 md:py-20" aria-labelledby="main-recommendation-title">
+    <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+        <header class="mb-12 text-center md:mb-16">
+            <p class="text-xs font-bold uppercase tracking-[0.4em] text-primary/40">Main Recommendation</p>
+            <h2 id="main-recommendation-title" class="mt-2 font-serif text-3xl font-bold text-[#17488d] md:text-5xl">
+                {isZh ? "主要推荐" : "Main Recommendation"}
+            </h2>
+            <div class="mx-auto mt-5 flex max-w-md items-center gap-4 text-primary">
+                <span class="h-px flex-1 bg-primary/40"></span>
+                <span class="flex gap-1"><i class="h-2 w-2 rounded-full bg-primary"></i><i class="h-2 w-2 rounded-full bg-primary"></i><i class="h-2 w-2 rounded-full bg-primary"></i></span>
+                <span class="h-px flex-1 bg-primary/40"></span>
+            </div>
+        </header>
+
+        {items.length ? (
+            <div class="grid gap-5 md:grid-cols-3 md:items-start">
+                {columns.map((column) => (
+                    <div class="grid gap-5">
+                        {column.map((item) => (
+                            <article class="overflow-hidden border border-[#2457a6]/15 bg-[#edf3fb]">
+                                {item.src ? (
+                                    <img src={item.src} alt={item.alt} loading="lazy" class="block h-auto w-full object-contain" />
+                                ) : (
+                                    <div class="grid aspect-square place-items-center bg-slate-100 px-5 text-center text-xs font-bold text-slate-400">{placeholder}</div>
+                                )}
+                                <p class="whitespace-pre-line bg-[#2457a6] px-4 py-4 text-center text-sm font-semibold leading-5 text-white md:text-base">
+                                    {item.text || placeholder}
+                                </p>
+                            </article>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        ) : (
+            <div class="grid min-h-72 place-items-center border border-dashed border-primary/30 bg-[#edf3fb] px-6 text-center text-sm font-bold text-primary/60">
+                {placeholder}
+            </div>
+        )}
+    </div>
+</section>

@@ -42,18 +42,21 @@ export const productType = defineType({
             validation: (rule) => rule.required(),
         }),
         defineField({
-            name: "category",
-            title: "Product Category",
-            type: "string",
+            name: "productType",
+            title: "Product category",
+            type: "reference",
+            to: [{ type: "category" }],
             options: {
-                list: [
-                    { title: "清洁 (Cleansing)", value: "cleansing" },
-                    { title: "补水 (Hydrating)", value: "hydrating" },
-                    { title: "防晒 (Sunscreen)", value: "sunscreen" },
-                    { title: "抗衰 (Anti-aging)", value: "antiAging" },
-                ],
+                filter: "active != false",
             },
             validation: (rule) => rule.required(),
+        }),
+        defineField({
+            name: "category",
+            title: "Legacy category key",
+            type: "string",
+            hidden: true,
+            description: "Retained only for backward compatibility with older imports.",
         }),
         defineField({
             name: "subcategory",

@@ -50,16 +50,57 @@ function resolveFromEmail(value) {
     return `E-commer Astro <noreply@${configured}>`;
 }
 
-function buildEmail({ name, email, company, phone, productInterest, message, sourceUrl }) {
+function buildEmail(payload) {
+    const {
+        inquiryId,
+        name,
+        email,
+        company,
+        phone,
+        productInterest,
+        message,
+        sourceUrl,
+        locale,
+        submittedAt,
+        receivedAt,
+        firstLandingPage,
+        firstReferrer,
+        firstTouchAt,
+        lastLandingPage,
+        lastReferrer,
+        lastTouchAt,
+        utmSource,
+        utmMedium,
+        utmCampaign,
+        utmContent,
+        utmTerm,
+        country,
+    } = payload;
     const subjectName = name || email;
-    const subject = `New inquiry from ${subjectName}`;
+    const subject = `[${inquiryId}] New inquiry from ${subjectName}`;
     const rows = [
+        ["Inquiry ID", inquiryId],
         ["Name", name],
         ["Email", email],
         ["Company", company],
         ["Phone", phone],
         ["Product interest", productInterest],
         ["Source", sourceUrl],
+        ["Language", locale],
+        ["Country", country],
+        ["Submitted at", submittedAt],
+        ["Received at", receivedAt],
+        ["First landing page", firstLandingPage],
+        ["First referrer", firstReferrer],
+        ["First touch at", firstTouchAt],
+        ["Last landing page", lastLandingPage],
+        ["Last referrer", lastReferrer],
+        ["Last touch at", lastTouchAt],
+        ["UTM source", utmSource],
+        ["UTM medium", utmMedium],
+        ["UTM campaign", utmCampaign],
+        ["UTM content", utmContent],
+        ["UTM term", utmTerm],
     ].filter(([, value]) => value);
 
     const text = [
@@ -136,6 +177,7 @@ export async function onRequestPost({ request, env }) {
         }
 
         const payload = {
+            inquiryId: crypto.randomUUID(),
             name: clean(body.name, 160),
             email: clean(body.email, 240).toLowerCase(),
             company: clean(body.company, 200),
@@ -143,6 +185,21 @@ export async function onRequestPost({ request, env }) {
             productInterest: clean(body.productInterest, 240),
             message: clean(body.message),
             sourceUrl: clean(body.sourceUrl, 500),
+            locale: clean(body.locale, 20),
+            submittedAt: clean(body.submittedAt, 40),
+            receivedAt: new Date().toISOString(),
+            firstLandingPage: clean(body.firstLandingPage, 700),
+            firstReferrer: clean(body.firstReferrer, 700),
+            firstTouchAt: clean(body.firstTouchAt, 40),
+            lastLandingPage: clean(body.lastLandingPage, 700),
+            lastReferrer: clean(body.lastReferrer, 700),
+            lastTouchAt: clean(body.lastTouchAt, 40),
+            utmSource: clean(body.utmSource, 200),
+            utmMedium: clean(body.utmMedium, 200),
+            utmCampaign: clean(body.utmCampaign, 200),
+            utmContent: clean(body.utmContent, 200),
+            utmTerm: clean(body.utmTerm, 200),
+            country: clean(request.cf?.country, 10),
         };
 
         if (!payload.name || !payload.email || !payload.message) {
@@ -164,7 +221,7 @@ export async function onRequestPost({ request, env }) {
             );
         }
 
-        return json({ ok: true });
+        return json({ ok: true, inquiryId: payload.inquiryId });
     } catch (error) {
         console.error("[contact] unexpected error", error);
         return json({ ok: false, error: "Unable to send message" }, 500);

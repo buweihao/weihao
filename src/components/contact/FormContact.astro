@@ -8,8 +8,9 @@ type Props = { productInterest?: string; idPrefix?: string; compact?: boolean };
 const { productInterest = "", idPrefix = "contact", compact = false } = Astro.props;
 const fieldId = (name: string) => `${idPrefix}-${name}`;
 const placeholders = currentLocale === "zh"
-    ? { firstName: "名字", lastName: "姓氏", message: "请填写您的采购需求……" }
-    : { firstName: "First name", lastName: "Last name", message: "Write your inquiry here..." };
+    ? { firstName: "名字", lastName: "姓氏", company: "公司名称", message: "请填写您的采购需求……" }
+    : { firstName: "First name", lastName: "Last name", company: "Company name", message: "Write your inquiry here..." };
+const companyLabel = currentLocale === "zh" ? "公司" : "Company";
 ---
 
 <form class="contact-form w-full" id={fieldId("form")} action="/api/contact" method="post" data-sending-msg={copy.sending} data-success-msg={copy.success}>
@@ -29,6 +30,10 @@ const placeholders = currentLocale === "zh"
         <div class="flex flex-col">
             <label for={fieldId("phone")} class="font-semibold text-[#0B2545] mb-2">{copy.phone}</label>
             <input type="tel" id={fieldId("phone")} name="phone" placeholder="Tel / WhatsApp" class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary" />
+        </div>
+        <div class="flex flex-col">
+            <label for={fieldId("company")} class="font-semibold text-[#0B2545] mb-2">{companyLabel}</label>
+            <input type="text" id={fieldId("company")} name="company" placeholder={placeholders.company} class="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary" autocomplete="organization" />
         </div>
     </div>
 
@@ -50,6 +55,9 @@ const placeholders = currentLocale === "zh"
 </form>
 
 <script>
+    import { trackEvent } from "../../lib/analytics";
+    import { getAttributionPayload } from "../../lib/attribution";
+
     function initContactForms() {
         const forms = document.querySelectorAll<HTMLFormElement>(".contact-form:not([data-ready])");
         forms.forEach((form) => {
@@ -69,11 +77,15 @@ const placeholders = currentLocale === "zh"
                 const payload = {
                     name: [formData.get("firstName"), formData.get("lastName")].filter(Boolean).join(" "),
                     email: formData.get("email"),
+                    company: formData.get("company"),
                     phone: formData.get("phone"),
                     productInterest: formData.get("productInterest"),
                     message: formData.get("message"),
                     website: formData.get("website"),
                     sourceUrl: formData.get("sourceUrl"),
+                    submittedAt: new Date().toISOString(),
+                    locale: document.documentElement.lang,
+                    ...getAttributionPayload(),
                 };
                 try {
                     const response = await fetch(form.action, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
@@ -82,6 +94,12 @@ const placeholders = currentLocale === "zh"
                     form.reset();
                     status.textContent = form.dataset.successMsg || "Message sent successfully!";
                     status.className = "contact-status mt-4 text-sm font-semibold text-emerald-600";
+                    trackEvent("inquiry_submit", {
+                        form_location: form.id,
+                        page_path: window.location.pathname,
+                        page_language: document.documentElement.lang,
+                        has_product: Boolean(payload.productInterest),
+                    });
                 } catch (error) {
                     status.textContent = error instanceof Error ? error.message : "Unable to send message";
                     status.className = "contact-status mt-4 text-sm font-semibold text-red-600";

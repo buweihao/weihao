@@ -75,8 +75,12 @@ Key integration files:
 Sanity document types intended for launcher/webhook filters:
 
 ```groq
-_type in ["atelierProduct", "category", "siteSettings"] && !(_id in path("drafts.**"))
+_type in ["atelierProduct", "category", "aboutPage", "aboutRecommendation", "aboutImageGallery", "siteSettings"] && !(_id in path("drafts.**"))
 ```
+
+### Dynamic product categories
+
+Product categories are managed as independent `category` documents in Sanity. Each category supports English and Chinese names, a stable URL slug, cover image, sort order, and an active/hidden switch. Products link to categories through the `productType` reference field. Homepage categories, navigation menus, product filters, and product-detail sidebars all use the same Sanity category query. The six local category definitions are only a build-safe fallback when Sanity is unavailable or contains no category documents.
 
 For Cloudflare Pages, set:
 

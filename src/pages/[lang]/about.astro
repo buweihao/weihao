@@ -1,17 +1,21 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import AboutHero from "../../components/about/AboutHero.astro";
-import AboutMission from "../../components/about/AboutMission.astro";
-import AboutValues from "../../components/about/AboutValues.astro";
+import CompanyInformation from "../../components/about/CompanyInformation.astro";
+import MainRecommendation from "../../components/about/MainRecommendation.astro";
+import WhyChooseUs from "../../components/about/WhyChooseUs.astro";
+import AdditionalImages from "../../components/about/AdditionalImages.astro";
 import { locales } from "../../lib/i18n";
 
 export function getStaticPaths() {
     return locales.map((lang) => ({ params: { lang } }));
 }
+
+const isZh = Astro.params.lang === "zh";
 ---
 
-<Layout>
-    <AboutHero />
-    <AboutMission />
-    <AboutValues />
+<Layout title={`${isZh ? "公司信息" : "Company Information"} | E-COMMER`}>
+    <CompanyInformation />
+    <MainRecommendation />
+    <WhyChooseUs />
+    <AdditionalImages />
 </Layout>

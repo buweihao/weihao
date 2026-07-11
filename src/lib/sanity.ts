@@ -56,12 +56,34 @@ export type SanityCategoryDocument = {
     nameI18n?: Partial<Record<Locale, string | null>> | null;
     slug?: string | null;
     image?: { asset?: unknown } | null;
+    order?: number | null;
+    active?: boolean | null;
 };
 
 export type SanityHeroSlide = {
     href?: string | null;
     primaryHref?: string | null;
     image?: { asset?: unknown } | null;
+};
+
+export type SanityAboutPage = {
+    companyVideoUrl?: string | null;
+    companyImages?: Array<{
+        asset?: unknown;
+        alt?: string | null;
+    }> | null;
+    companyDescriptionI18n?: Partial<Record<Locale, string | null>> | null;
+};
+
+export type SanityAboutRecommendation = {
+    items?: Array<{
+        image?: { asset?: unknown; alt?: string | null } | null;
+        textI18n?: Partial<Record<Locale, string | null>> | null;
+    }> | null;
+};
+
+export type SanityAboutImageGallery = {
+    images?: Array<{ asset?: unknown }> | null;
 };
 
 export type SanitySiteSettings = {
@@ -92,6 +114,9 @@ export type SanitySiteSettings = {
 let productsRequest: Promise<SanityProductDocument[]> | undefined;
 let categoriesRequest: Promise<SanityCategoryDocument[]> | undefined;
 let siteSettingsRequest: Promise<SanitySiteSettings | null> | undefined;
+let aboutPageRequest: Promise<SanityAboutPage | null> | undefined;
+let aboutRecommendationRequest: Promise<SanityAboutRecommendation | null> | undefined;
+let aboutImageGalleryRequest: Promise<SanityAboutImageGallery | null> | undefined;
 
 export async function fetchSanityProducts(): Promise<SanityProductDocument[]> {
     if (!sanityClient) return [];
@@ -146,11 +171,13 @@ export async function fetchSanityCategories(): Promise<SanityCategoryDocument[]>
 
     categoriesRequest = sanityClient
         .fetch<SanityCategoryDocument[]>(`
-            *[_type == "category" && defined(slug.current)] | order(coalesce(order, 999) asc, name asc) {
+            *[_type == "category" && defined(slug.current) && active != false] | order(coalesce(order, 999) asc, name asc) {
                 name,
                 nameI18n,
                 "slug": slug.current,
-                image
+                image,
+                order,
+                active
             }
         `)
         .catch((error) => {
@@ -202,6 +229,68 @@ export async function fetchSanitySiteSettings(): Promise<SanitySiteSettings | nu
         });
 
     return siteSettingsRequest;
+}
+
+export async function fetchSanityAboutPage(): Promise<SanityAboutPage | null> {
+    if (!sanityClient) return null;
+    if (aboutPageRequest && !import.meta.env.DEV) return aboutPageRequest;
+
+    aboutPageRequest = sanityClient
+        .fetch<SanityAboutPage | null>(`
+            *[_type == "aboutPage" && _id == "aboutPage"][0] {
+                "companyVideoUrl": companyVideo.asset->url,
+                "companyImages": coalesce(companyImages, [])[] {
+                    asset,
+                    alt
+                },
+                companyDescriptionI18n
+            }
+        `)
+        .catch((error) => {
+            console.warn("[sanity] Unable to load About Page:", error);
+            return null;
+        });
+
+    return aboutPageRequest;
+}
+
+export async function fetchSanityAboutRecommendation(): Promise<SanityAboutRecommendation | null> {
+    if (!sanityClient) return null;
+    if (aboutRecommendationRequest && !import.meta.env.DEV) return aboutRecommendationRequest;
+
+    aboutRecommendationRequest = sanityClient
+        .fetch<SanityAboutRecommendation | null>(`
+            *[_type == "aboutRecommendation" && _id == "aboutRecommendation"][0] {
+                "items": coalesce(items, [])[] {
+                    image { asset, alt },
+                    textI18n
+                }
+            }
+        `)
+        .catch((error) => {
+            console.warn("[sanity] Unable to load About Page recommendations:", error);
+            return null;
+        });
+
+    return aboutRecommendationRequest;
+}
+
+export async function fetchSanityAboutImageGallery(): Promise<SanityAboutImageGallery | null> {
+    if (!sanityClient) return null;
+    if (aboutImageGalleryRequest && !import.meta.env.DEV) return aboutImageGalleryRequest;
+
+    aboutImageGalleryRequest = sanityClient
+        .fetch<SanityAboutImageGallery | null>(`
+            *[_type == "aboutImageGallery" && _id == "aboutImageGallery"][0] {
+                "images": coalesce(images, [])[] { asset }
+            }
+        `)
+        .catch((error) => {
+            console.warn("[sanity] Unable to load additional About Page images:", error);
+            return null;
+        });
+
+    return aboutImageGalleryRequest;
 }
 
 export function imageUrlFor(source: unknown, width = 1200, height = 1500): string | undefined {

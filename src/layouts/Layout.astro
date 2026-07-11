@@ -32,6 +32,9 @@ const xDefaultUrl = new URL(
 	localePath(defaultLocale, stripLocale(Astro.url.pathname)),
 	Astro.site ?? Astro.url.origin,
 ).href;
+const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
+const umamiScriptUrl = import.meta.env.PUBLIC_UMAMI_SCRIPT_URL ?? "https://cloud.umami.is/script.js";
 ---
 
 <!doctype html>
@@ -43,6 +46,8 @@ const xDefaultUrl = new URL(
 		<meta name="generator" content={Astro.generator} />
 		<title>{pageTitle}</title>
 		<meta name="description" content={pageDescription} />
+		{googleSiteVerification ? <meta name="google-site-verification" content={googleSiteVerification} /> : null}
+		{umamiWebsiteId ? <script is:inline defer src={umamiScriptUrl} data-website-id={umamiWebsiteId} data-auto-track="true"></script> : null}
 		<link rel="canonical" href={canonicalUrl.href} />
 		{alternates.map((item) => <link rel="alternate" hreflang={item.hreflang} href={item.href} />)}
 		<link rel="alternate" hreflang="x-default" href={xDefaultUrl} />
@@ -63,6 +68,18 @@ const xDefaultUrl = new URL(
 		<FloatingContact />
 		<CartDrawer />
 		<ToasterComponent client:load />
+		<script>
+			import { installAutomaticAnalytics } from "../lib/analytics";
+			import { initializeAttribution } from "../lib/attribution";
+
+			function initializeGlobalTracking() {
+				initializeAttribution();
+				installAutomaticAnalytics();
+			}
+
+			initializeGlobalTracking();
+			document.addEventListener("astro:page-load", initializeGlobalTracking);
+		</script>
 	</body>
 </html>
 

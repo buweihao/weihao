@@ -1,0 +1,26 @@
+---
+import { fetchSanityAboutImageGallery, imageUrlForContain } from "../../lib/sanity";
+import { defaultLocale, isLocale } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const locale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const content = await fetchSanityAboutImageGallery();
+const images = (content?.images ?? [])
+    .map((image, index) => ({
+        src: imageUrlForContain(image.asset, 1920),
+        alt: locale === "zh" ? `关于我们补充图片 ${index + 1}` : `Additional About image ${index + 1}`,
+    }))
+    .filter((image): image is { src: string; alt: string } => Boolean(image.src));
+---
+
+{images.length > 0 && (
+    <section class="bg-white" aria-label={locale === "zh" ? "关于我们的更多图片" : "More About us images"}>
+        <div class="mx-auto max-w-6xl px-5 py-12 sm:px-6 md:py-16 lg:px-8">
+            <div class="grid gap-6 md:gap-8">
+                {images.map((image) => (
+                    <img src={image.src} alt={image.alt} loading="lazy" class="block h-auto w-full" />
+                ))}
+            </div>
+        </div>
+    </section>
+)}

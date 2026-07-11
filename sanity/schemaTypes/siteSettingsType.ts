@@ -164,7 +164,7 @@ export const siteSettingsType = defineType({
                             name: "href",
                             title: "Click-through URL",
                             type: "string",
-                            description: "Use a local path like /products?type=cleansing or a full URL.",
+                            description: "Use a local path like /products?type=essence or a full URL.",
                             validation: (rule) => rule.required(),
                         }),
                         defineField({

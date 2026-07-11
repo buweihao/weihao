@@ -39,11 +39,6 @@ export type CatalogCategory = {
     slug: string;
 };
 
-function categorySlugFromPath(path: string, name: string) {
-    const typeParam = path.match(/[?&]type=([^&]+)/)?.[1];
-    return typeParam ?? path.split("/").filter(Boolean).at(-1) ?? slugifyCategory(name);
-}
-
 function normalizeProduct(doc: SanityProductDocument, index: number, locale: Locale): Product {
     const images =
         doc.images
@@ -59,10 +54,16 @@ function normalizeProduct(doc: SanityProductDocument, index: number, locale: Loc
         pickLocalized(doc.category, doc.categoryI18n, locale, "Products"),
     );
 
-    if (category === "cleansing") category = ui[locale].nav.cleansing;
-    else if (category === "hydrating") category = ui[locale].nav.hydrating;
-    else if (category === "sunscreen") category = ui[locale].nav.sunscreen;
-    else if (category === "antiAging") category = ui[locale].nav.antiAging;
+    if (category === "toner") category = ui[locale].nav.toner;
+    else if (category === "essence") category = ui[locale].nav.essence;
+    else if (category === "lotion") category = ui[locale].nav.lotion;
+    else if (category === "cream") category = ui[locale].nav.cream;
+    else if (category === "mask") category = ui[locale].nav.mask;
+    else if (category === "cleansing") category = ui[locale].nav.cleansing;
+    // Legacy values remain readable until older projects migrate their documents.
+    else if (category === "hydrating") category = ui[locale].nav.essence;
+    else if (category === "sunscreen") category = ui[locale].nav.cream;
+    else if (category === "antiAging") category = ui[locale].nav.essence;
 
     // Keep the filter key language-neutral. Chinese labels can contain no ASCII
     // characters, so deriving the slug from the translated display name collapses
@@ -112,58 +113,36 @@ export async function getCatalogProducts(locale: Locale = defaultLocale): Promis
 }
 
 export async function getCatalogCategories(locale: Locale = defaultLocale) {
-    const sanityCategories = await fetchSanityCategories();
+    const [sanityCategories, sanityProducts] = await Promise.all([
+        fetchSanityCategories(),
+        fetchSanityProducts(),
+    ]);
+    const products = sanityProducts.map((product, index) => normalizeProduct(product, index, locale));
 
-    if (sanityCategories.length === 0) {
-        const sanityProducts = await fetchSanityProducts();
-        if (sanityProducts.length > 0) {
-            const products = sanityProducts.map((product, index) => normalizeProduct(product, index, locale));
-            const categoryMap = new Map<string, CatalogCategory>();
-
-            products.forEach((product) => {
-                const slug = product.categorySlug?.trim() || slugifyCategory(product.category);
-                if (!isValidCategorySlug(slug)) return;
-                if (!categoryMap.has(slug)) {
-                    categoryMap.set(slug, {
-                        name: product.category,
-                        image: product.images[0] ?? fallbackImage,
-                        slug,
-                        path: localizedPath(`/products?type=${slug}`, locale),
-                    });
-                }
-            });
-
-            return Array.from(categoryMap.values());
-        }
-
-        return localCategories
-            .map((category) => {
-                const slug = categorySlugFromPath(category.path, category.name);
-                if (!isValidCategorySlug(slug)) return undefined;
-
-                return {
-                    ...category,
-                    slug,
-                    path: localizedPath(`/products?type=${slug}`, locale),
-                };
-            })
-            .filter((category): category is CatalogCategory => Boolean(category));
-    }
-
-    return sanityCategories
-        .map((category) => {
-            const name = pickLocalized(category.name, category.nameI18n, locale, "Products");
-            const slug = category.slug?.trim() || slugifyCategory(name);
-            if (!isValidCategorySlug(slug)) return undefined;
-
+    if (sanityCategories.length > 0) {
+        return sanityCategories.map((category): CatalogCategory => {
+            const slug = category.slug?.trim() || slugifyCategory(category.name ?? "");
+            const matchingProduct = products.find((product) => product.categorySlug === slug);
             return {
-                name,
-                image: imageUrlFor(category.image?.asset, 2000, 1000) ?? fallbackImage,
+                name: pickLocalized(category.name, category.nameI18n, locale, "Products"),
+                image: imageUrlFor(category.image?.asset, 1200, 1200) ?? matchingProduct?.images[0] ?? fallbackImage,
                 slug,
                 path: localizedPath(`/products?type=${slug}`, locale),
             };
-        })
-        .filter((category): category is CatalogCategory => Boolean(category));
+        }).filter((category) => isValidCategorySlug(category.slug));
+    }
+
+    return localCategories.map((definition): CatalogCategory => {
+        const matchingProduct = products.find((product) => product.categorySlug === definition.slug);
+        return {
+            name: definition.nameI18n[locale],
+            image:
+                matchingProduct?.images[0] ??
+                definition.image,
+            slug: definition.slug,
+            path: localizedPath(`/products?type=${definition.slug}`, locale),
+        };
+    });
 }
 
 function normalizeHeroSlide(slide: SanityHeroSlide, index: number, locale: Locale): HeroSlide {

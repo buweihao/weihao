@@ -1,0 +1,90 @@
+---
+import { Icon } from "astro-icon/components";
+import { defaultLocale, isLocale } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const locale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const isZh = locale === "zh";
+
+const advantages = [
+    {
+        icon: "lucide:badge-check",
+        title: isZh ? "国际认证体系" : "International Certification System",
+        description: isZh
+            ? "通过美国 GMPC、欧盟 ISO 9001 与 ISO 22716 双体系认证，并拥有 17 项国家实用新型专利。"
+            : "US GMPC certified, with EU ISO 9001 and ISO 22716 dual-system certification and 17 national utility model patents.",
+    },
+    {
+        icon: "lucide:bot",
+        title: isZh ? "智能化生产线" : "Intelligent Production Line",
+        description: isZh
+            ? "配备 6 条专业生产线，日产能超过 100,000 件，并支持冻干粉、一次性面膜等新品配方。"
+            : "Six production lines with daily capacity above 100,000 pieces, supporting new formulations such as freeze-dried powder and single-use masks.",
+    },
+    {
+        icon: "lucide:flask-conical",
+        title: isZh ? "研发创新中心" : "R&D Innovation Center",
+        description: isZh
+            ? "20 多名资深工程师、10,000 多套成熟配方，提供个性化 OEM/ODM 方案与四大核心技术支持。"
+            : "A team of 20+ senior engineers, 10,000+ mature formulas, customized OEM/ODM solutions, and four core technologies.",
+    },
+    {
+        icon: "lucide:handshake",
+        title: isZh ? "客户服务承诺" : "Customer Service Commitment",
+        description: isZh
+            ? "快速响应，最快 3 个工作日提供样品，最快 7 个工作日完成批量交付。"
+            : "Rapid response, samples in as little as 3 working days, and complete batch delivery in as little as 7 working days.",
+    },
+    {
+        icon: "lucide:shield-check",
+        title: isZh ? "绿色制造标准" : "Green Manufacturing Standards",
+        description: isZh
+            ? "实行全流程追溯与不合格成分零添加，定制产品可配合完成各类检测。"
+            : "Full-process traceability, zero addition of disqualified ingredients, and testing support for customized products.",
+    },
+];
+---
+
+<section class="why-choose-us relative isolate overflow-hidden bg-[#2457a6] py-16 text-white md:py-24" aria-labelledby="why-choose-us-title">
+    <div class="absolute inset-0 -z-10 opacity-25" aria-hidden="true">
+        <div class="absolute -right-28 top-10 h-[34rem] w-[34rem] rounded-full border-[5rem] border-white/10"></div>
+        <div class="absolute -bottom-48 -left-36 h-[36rem] w-[36rem] rounded-full border-[6rem] border-white/10"></div>
+        <div class="factory-grid absolute inset-0"></div>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8">
+        <header class="mb-12 text-center md:mb-16">
+            <p class="text-xs font-bold uppercase tracking-[0.4em] text-white/45">Why Choose Us</p>
+            <h2 id="why-choose-us-title" class="mt-2 font-serif text-3xl font-bold md:text-5xl">
+                {isZh ? "为什么选择我们" : "Why Choose Us"}
+            </h2>
+            <div class="mx-auto mt-5 flex max-w-md items-center gap-4">
+                <span class="h-px flex-1 bg-white/70"></span>
+                <span class="flex gap-1"><i class="h-2 w-2 rounded-full bg-white"></i><i class="h-2 w-2 rounded-full bg-white"></i><i class="h-2 w-2 rounded-full bg-white"></i></span>
+                <span class="h-px flex-1 bg-white/70"></span>
+            </div>
+        </header>
+
+        <div class="grid gap-6 md:grid-cols-6 lg:gap-7">
+            {advantages.map((item, index) => (
+                <article class:list={["flex min-h-[22rem] flex-col items-center bg-white px-7 py-10 text-center text-slate-900 shadow-xl", index < 3 ? "md:col-span-2" : index === 3 ? "md:col-span-3 md:ml-auto md:w-[68%]" : "md:col-span-3 md:mr-auto md:w-[68%]"]}>
+                    <Icon name={item.icon} class="h-20 w-20 text-[#2457a6]" />
+                    <h3 class="mt-8 flex min-h-12 items-center justify-center rounded-full bg-[#2457a6] px-6 py-2 text-sm font-black uppercase leading-4 text-white md:text-base">
+                        {item.title}
+                    </h3>
+                    <p class="mt-8 text-sm leading-6 text-slate-700 md:text-base">{item.description}</p>
+                </article>
+            ))}
+        </div>
+    </div>
+</section>
+
+<style>
+    .factory-grid {
+        background-image:
+            linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: linear-gradient(to bottom, transparent, black 22%, black 86%, transparent);
+    }
+</style>

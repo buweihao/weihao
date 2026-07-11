@@ -6,7 +6,7 @@ import process from "node:process";
 const ROOT = process.cwd();
 const DATA_FILE = path.resolve(ROOT, process.env.PRODUCTS_DATA_FILE ?? "products_actual.json");
 const APPLY = process.argv.includes("--apply");
-const VALID_CATEGORIES = new Set(["cleansing", "hydrating", "sunscreen", "antiAging"]);
+const VALID_CATEGORIES = new Set(["toner", "essence", "lotion", "cream", "mask", "cleansing"]);
 
 loadLocalEnv(path.join(ROOT, ".env"));
 
@@ -107,6 +107,7 @@ function buildDocument(product, id, images) {
         nameI18n: { en: product.name, zh: product.nameZh },
         slug: { _type: "slug", current: product.slug },
         category: product.category,
+        productType: { _type: "reference", _ref: `category.${product.category}` },
         price: Number(product.price),
         description: product.description,
         descriptionI18n: { en: product.description, zh: product.descriptionZh },

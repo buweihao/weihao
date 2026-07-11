@@ -6,6 +6,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import sanity from '@sanity/astro';
+import sitemap from '@astrojs/sitemap';
 import { loadEnv } from 'vite';
 
 const env = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
@@ -17,6 +18,9 @@ const sanityApiVersion = env.PUBLIC_SANITY_API_VERSION ?? '2026-07-03';
 export default defineConfig({
   site: env.SITE ?? 'https://example.com',
   integrations: [
+    sitemap({
+      filter: (page) => !page.includes('/admin'),
+    }),
     ...(sanityProjectId
       ? [
           sanity({

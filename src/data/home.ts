@@ -1,92 +1,62 @@
 export const categories = [
     {
-        name: "Computers",
-        image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?q=80&w=2000&auto=format&fit=crop",
-        path: "/products?type=computers",
+        slug: "toner",
+        nameI18n: { en: "Toner", zh: "爽肤水" },
+        image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=1200&q=85",
+        path: "/products?type=toner",
     },
     {
-        name: "Phones",
-        image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=2000&auto=format&fit=crop",
-        path: "/products?type=phones",
+        slug: "essence",
+        nameI18n: { en: "Serum", zh: "精华液" },
+        image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=1200&q=85",
+        path: "/products?type=essence",
     },
     {
-        name: "Audio",
-        image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=2000&auto=format&fit=crop",
-        path: "/products?type=audio",
+        slug: "lotion",
+        nameI18n: { en: "Lotion", zh: "乳液" },
+        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=1200&q=85",
+        path: "/products?type=lotion",
     },
     {
-        name: "Accessories",
-        image: "https://i.ytimg.com/vi/6nF-4i3RrG0/hq720.jpg?sqp=-oaymwEXCK4FEIIDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLA1Ir1cXQna8UT0zPxI62l1ZlvvEQ",
-        path: "/products?type=accessories",
+        slug: "cream",
+        nameI18n: { en: "Face Cream", zh: "面霜" },
+        image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=1200&q=85",
+        path: "/products?type=cream",
+    },
+    {
+        slug: "mask",
+        nameI18n: { en: "Facial Mask", zh: "面膜" },
+        image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&w=1200&q=85",
+        path: "/products?type=mask",
+    },
+    {
+        slug: "cleansing",
+        nameI18n: { en: "Cleansing & Makeup Removal", zh: "洗卸清洁" },
+        image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=1200&q=85",
+        path: "/products?type=cleansing",
     },
 ];
 
 export const featuredLinks = [
     {
         name: "About Us",
-        image:
-            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+        image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
         path: "/about",
         className: "lg:col-span-2",
         imageClass: "aspect-square lg:aspect-[2/1]",
     },
     {
         name: "Our Blog",
-        image:
-            "https://img.freepik.com/foto-gratis/mensaje-online-blog-chat-comunicacion-envolver-concepto-icono-grafico_53876-139717.jpg?semt=ais_hybrid&w=740&q=80",
+        image: "https://img.freepik.com/foto-gratis/mensaje-online-blog-chat-comunicacion-envolver-concepto-icono-grafico_53876-139717.jpg?semt=ais_hybrid&w=740&q=80",
         path: "/blog",
         className: "lg:col-span-2",
         imageClass: "aspect-square lg:aspect-[2/1]",
     },
     {
         name: "Contact Us",
-        image:
-            "https://voca-land.sgp1.cdn.digitaloceanspaces.com/-1/1635919600965/contact-us.jpeg",
+        image: "https://voca-land.sgp1.cdn.digitaloceanspaces.com/-1/1635919600965/contact-us.jpeg",
         path: "/contact",
         className: "lg:col-span-4",
         imageClass: "aspect-[2/1] lg:aspect-[4/1]",
     },
-];
-
-export const featuredProducts = [
-    {
-        title: "MacBook Pro 16 M3 Max",
-        price: 3499,
-        stock: 5,
-        images: [
-            "https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=80"
-        ],
-        slug: "macbook-pro-16-m3-max"
-    },
-    {
-        title: "Sony WH-1000XM5",
-        price: 399,
-        stock: 12,
-        images: [
-            "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=80"
-        ],
-        slug: "sony-wh-1000xm5"
-    },
-    {
-        title: "iPhone 15 Pro Max",
-        price: 1199,
-        stock: 0,
-        images: [
-            "https://images.unsplash.com/photo-1678652197831-2d180705cd2c?auto=format&fit=crop&w=800&q=80"
-        ],
-        slug: "iphone-15-pro-max"
-    },
-    {
-        title: "Logitech MX Master 3S",
-        price: 99,
-        stock: 50,
-        images: [
-            "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?auto=format&fit=crop&w=800&q=80",
-        ],
-        slug: "logitech-mx-master-3s"
-    }
 ];
