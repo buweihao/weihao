@@ -45,12 +45,17 @@ function normalizeProduct(doc: SanityProductDocument, index: number, locale: Loc
         doc.images
             ?.map((image) => imageUrlFor(image.asset))
             .filter((url): url is string => Boolean(url)) ?? [];
-    const category = pickLocalized(
+    let category = pickLocalized(
         doc.productTypeName,
         doc.productTypeNameI18n,
         locale,
         pickLocalized(doc.category, doc.categoryI18n, locale, "Products"),
     );
+
+    if (category === "cleansing") category = ui[locale].nav.cleansing;
+    else if (category === "hydrating") category = ui[locale].nav.hydrating;
+    else if (category === "sunscreen") category = ui[locale].nav.sunscreen;
+    else if (category === "antiAging") category = ui[locale].nav.antiAging;
 
     return {
         id: doc.id ?? doc.slug ?? String(index + 1),
