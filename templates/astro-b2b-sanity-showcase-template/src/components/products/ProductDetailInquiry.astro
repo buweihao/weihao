@@ -1,0 +1,47 @@
+---
+import FormContact from "../contact/FormContact.astro";
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+
+type Props = {
+    productName: string;
+    productDetail?: string;
+};
+
+const { productName, productDetail = "" } = Astro.props;
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const copy = ui[currentLocale].product;
+---
+
+<section class="mt-24 border-t border-slate-100 pt-16" aria-labelledby="product-detail-title">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 md:p-9 shadow-sm">
+        <p class="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-primary">
+            {copy.productDetail}
+        </p>
+        <h2 id="product-detail-title" class="text-xl md:text-2xl font-bold leading-snug text-slate-950">
+            {productName}
+        </h2>
+        <div class="mt-6 border-t border-slate-100 pt-6">
+            <p class="whitespace-pre-line text-base leading-7 text-slate-600 md:text-[17px] md:leading-8">
+                {productDetail || copy.productDetailEmpty}
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="product-inquiry" class="mt-24 scroll-mt-32 border-t border-slate-200 pt-16" aria-labelledby="product-inquiry-title">
+    <div class="max-w-3xl">
+        <div class="mb-8">
+            <p class="text-primary font-semibold text-sm mb-3">
+                {productName}
+            </p>
+            <h2 id="product-inquiry-title" class="text-2xl md:text-3xl font-bold text-slate-900">
+                {copy.getInTouch}
+            </h2>
+            <p class="mt-4 text-slate-600 leading-relaxed">{copy.inquiryIntro}</p>
+        </div>
+        <div class="rounded-2xl bg-white border border-slate-200 p-6 md:p-10 text-slate-900 shadow-sm">
+            <FormContact productInterest={productName} />
+        </div>
+    </div>
+</section>

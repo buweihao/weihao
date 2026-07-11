@@ -1,0 +1,47 @@
+---
+import CategoryCardHome from "./CategoryCardHome.astro";
+import { getCatalogCategories } from "../../data/catalog";
+import { featuredLinks } from "../../data/home.ts";
+import { defaultLocale, isLocale, localizedPath, type Locale, ui } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale: Locale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const categories = await getCatalogCategories(currentLocale);
+const copy = ui[currentLocale];
+const featuredNames = currentLocale === "zh" ? ["关于我们", "我们的博客", "联系我们"] : featuredLinks.map((link) => link.name);
+---
+
+<section class="py-10 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2
+            class="text-3xl font-black text-slate-900 uppercase tracking-tighter mb-12"
+        >
+            {copy.categories}
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {
+                categories.map((category) => (
+                    <CategoryCardHome
+                        name={category.name}
+                        image={category.image}
+                        path={category.path}
+                    />
+                ))
+            }
+        </div>
+
+        <div class="mt-14 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {
+                featuredLinks.map((link, index) => (
+                    <CategoryCardHome
+                        name={featuredNames[index] ?? link.name}
+                        image={link.image}
+                        path={localizedPath(link.path, currentLocale)}
+                        imageClass={link.imageClass}
+                    />
+                ))
+            }
+        </div>
+    </div>
+</section>

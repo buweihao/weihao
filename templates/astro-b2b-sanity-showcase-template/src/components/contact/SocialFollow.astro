@@ -1,0 +1,31 @@
+---
+import { Icon } from "astro-icon/components";
+import { getSiteSettings } from "../../data/siteSettings";
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const copy = ui[currentLocale].contactPage;
+const siteSettings = await getSiteSettings(currentLocale);
+---
+
+{
+    siteSettings.socialLinks.length > 0 && (
+        <div>
+            <h3 class="font-bold text-lg mb-4">{copy.followUs}</h3>
+            <div class="flex gap-4">
+                {siteSettings.socialLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={link.name}
+                        class="btn btn-circle btn-ghost hover:bg-primary/10 hover:text-primary transition-colors"
+                    >
+                        <Icon name={link.icon} class="w-6 h-6" />
+                    </a>
+                ))}
+            </div>
+        </div>
+    )
+}

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0",
+  "skill": "b2b-site-launcher",
+  "templateUrl": "https://github.com/buweihao/astro-b2b-sanity-showcase-template",
+  "projectName": "customer-showcase-site",
+  "localFolder": "customer-showcase-site",
+  "brand": {
+    "name": "Example Brand",
+    "email": "sales@example.com",
+    "whatsapp": "+15551234567"
+  },
+  "github": {
+    "owner": "your-github-owner",
+    "repo": "customer-showcase-site",
+    "branch": "master"
+  },
+  "cloudflare": {
+    "rootDomain": "example.com",
+    "domain": "showcase.example.com",
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "packageManager": "npm",
+    "npmVersion": "10.9.2"
+  },
+  "analytics": {
+    "provider": "umami",
+    "umamiWebsiteId": "",
+    "umamiScriptUrl": "https://cloud.umami.is/script.js",
+    "googleSiteVerification": ""
+  },
+  "site": {
+    "goal": "bilingual B2B product showcase and inquiry site",
+    "pages": ["home", "products", "about", "blog", "contact"],
+    "categories": ["category-a", "category-b", "category-c", "category-d"],
+    "backend": "sanity",
+    "publishMode": "commit-push-cloudflare-pages"
+  },
+  "localization": {
+    "enabled": true,
+    "locales": ["en", "zh"],
+    "defaultLocale": "en",
+    "routing": "path-prefix",
+    "detection": "saved-browser-ip-default",
+    "contentModel": "field-level",
+    "preserveManualSwitcher": true,
+    "rememberSelection": true,
+    "generateHreflang": true
+  },
+  "sanity": {
+    "enabled": true,
+    "mode": "auto-create",
+    "projectId": "",
+    "dataset": "production",
+    "apiVersion": "2026-07-03",
+    "studioPath": "/admin",
+    "corsOrigins": ["http://localhost:4321", "https://showcase.example.com"],
+    "webhookToCloudflare": true,
+    "documentTypes": ["atelierProduct", "siteSettings"]
+  },
+  "inquiry": {
+    "enabled": true,
+    "mode": "email-only",
+    "emailProvider": "resend",
+    "notifyEmail": "sales@example.com",
+    "fromEmail": "Example Brand <noreply@example.com>",
+    "providerSecretName": "RESEND_API_KEY",
+    "endpoint": "/api/contact",
+    "fields": ["name", "email", "phone", "message", "productInterest"]
+  },
+  "design": {
+    "selectedTheme": "astro-b2b-sanity-showcase-template",
+    "templateFidelity": "preserve",
+    "preserveTemplateIdentity": true,
+    "notes": "Preserve the responsive layout, floating inquiry tools, bilingual routes, and Sanity fallbacks."
+  },
+  "automation": {
+    "createGithubRepo": true,
+    "pushBranch": true,
+    "createCloudflarePagesProject": true,
+    "attachCustomDomain": true,
+    "createDnsRecord": true,
+    "verifyDeployment": true
+  }
+}

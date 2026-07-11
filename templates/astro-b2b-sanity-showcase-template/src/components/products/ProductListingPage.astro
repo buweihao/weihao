@@ -1,0 +1,209 @@
+---
+import CardProduct from "./CardProduct.astro";
+import Breadcrumbs from "../ui/Breadcrumbs.astro";
+import {
+    getCatalogCategories,
+    getCatalogProducts,
+    slugifyCategory,
+    type CatalogCategory,
+} from "../../data/catalog";
+import { defaultLocale, localePath, type Locale, ui } from "../../lib/i18n";
+
+type Props = {
+    locale?: Locale;
+};
+
+const currentLocale = Astro.props.locale ?? defaultLocale;
+const copy = ui[currentLocale];
+const products = await getCatalogProducts(currentLocale);
+const catalogCategories = await getCatalogCategories(currentLocale);
+const categoryMap = new Map<string, CatalogCategory>();
+
+catalogCategories.forEach((category) => {
+    categoryMap.set(category.slug, category);
+});
+
+products.forEach((product) => {
+    const slug = product.categorySlug ?? slugifyCategory(product.category);
+    if (!categoryMap.has(slug)) {
+        categoryMap.set(slug, {
+            name: product.category,
+            image: product.images[0],
+            slug,
+            path: localePath(currentLocale, `/products?type=${slug}`),
+        });
+    }
+});
+
+const categories = Array.from(categoryMap.values());
+const breadcrumbItems = [
+    { label: copy.nav.home, href: localePath(currentLocale, "/") },
+    { label: copy.nav.products },
+];
+const allTypesLabel = currentLocale === "zh" ? "全部类型" : "All types";
+const searchLabel = currentLocale === "zh" ? "搜索产品" : "Search products";
+const stockLabel = currentLocale === "zh" ? "仅显示有库存" : "In stock only";
+const sortLabel = currentLocale === "zh" ? "排序" : "Sort";
+const emptyLabel = currentLocale === "zh" ? "没有找到匹配产品" : "No matching products";
+---
+
+<div class="bg-white min-h-screen pb-20">
+    <section class="bg-slate-950 text-white">
+        <div class="max-w-7xl mx-auto px-6 py-14 md:py-20">
+            <p class="text-primary font-black uppercase text-xs tracking-[0.4em]">
+                {copy.categories}
+            </p>
+            <h1 class="mt-4 text-4xl md:text-6xl font-black uppercase italic tracking-tighter">
+                {copy.nav.products}
+            </h1>
+        </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-6 pt-8">
+        <Breadcrumbs items={breadcrumbItems} />
+
+        <div class="mt-8 grid gap-3 md:grid-cols-[1.2fr_1fr_1fr_auto] md:items-end">
+            <label class="form-control w-full">
+                <span class="label-text font-bold text-xs uppercase tracking-widest text-slate-500">
+                    {searchLabel}
+                </span>
+                <input
+                    id="product-search"
+                    type="search"
+                    class="input input-bordered w-full"
+                    placeholder={searchLabel}
+                />
+            </label>
+
+            <label class="form-control w-full">
+                <span class="label-text font-bold text-xs uppercase tracking-widest text-slate-500">
+                    {copy.categories}
+                </span>
+                <select id="product-type-filter" class="select select-bordered w-full">
+                    <option value="">{allTypesLabel}</option>
+                    {categories.map((category) => (
+                        <option value={category.slug}>{category.name}</option>
+                    ))}
+                </select>
+            </label>
+
+            <label class="form-control w-full">
+                <span class="label-text font-bold text-xs uppercase tracking-widest text-slate-500">
+                    {sortLabel}
+                </span>
+                <select id="product-sort" class="select select-bordered w-full">
+                    <option value="featured">{currentLocale === "zh" ? "默认" : "Featured"}</option>
+                    <option value="price-asc">{currentLocale === "zh" ? "价格从低到高" : "Price low to high"}</option>
+                    <option value="price-desc">{currentLocale === "zh" ? "价格从高到低" : "Price high to low"}</option>
+                    <option value="name-asc">{currentLocale === "zh" ? "名称 A-Z" : "Name A-Z"}</option>
+                </select>
+            </label>
+
+            <label class="label cursor-pointer justify-start gap-3 md:pb-3">
+                <input id="product-stock-filter" type="checkbox" class="checkbox checkbox-primary" />
+                <span class="label-text font-semibold">{stockLabel}</span>
+            </label>
+        </div>
+
+        <div
+            id="products-grid"
+            class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+        >
+            {products.map((product, index) => {
+                const categorySlug = product.categorySlug ?? slugifyCategory(product.category);
+                return (
+                    <div
+                        class="product-item transition-all duration-300"
+                        data-index={index}
+                        data-name={product.name.toLowerCase()}
+                        data-category={categorySlug}
+                        data-stock={product.stock}
+                        data-price={product.price}
+                    >
+                        <CardProduct
+                            title={product.title}
+                            price={product.price}
+                            images={product.images}
+                            stock={product.stock}
+                            slug={product.slug}
+                        />
+                    </div>
+                );
+            })}
+        </div>
+
+        <div
+            id="no-products-msg"
+            class="hidden mt-10 text-center py-24 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200"
+        >
+            <p class="text-slate-400 font-bold uppercase tracking-widest">
+                {emptyLabel}
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function syncProductsPage() {
+        const params = new URLSearchParams(window.location.search);
+        const search = document.getElementById("product-search") as HTMLInputElement | null;
+        const type = document.getElementById("product-type-filter") as HTMLSelectElement | null;
+        const stock = document.getElementById("product-stock-filter") as HTMLInputElement | null;
+        const sort = document.getElementById("product-sort") as HTMLSelectElement | null;
+        const grid = document.getElementById("products-grid");
+        const empty = document.getElementById("no-products-msg");
+
+        if (!grid || !search || !type || !stock || !sort) return;
+
+        const initialType = params.get("type") || "";
+        if (initialType && type.value !== initialType) {
+            type.value = initialType;
+        }
+
+        const applyFilters = () => {
+            const searchValue = search.value.trim().toLowerCase();
+            const typeValue = type.value;
+            const stockOnly = stock.checked;
+            const items = Array.from(grid.querySelectorAll<HTMLElement>(".product-item"));
+            let visibleCount = 0;
+
+            items.forEach((item) => {
+                const matchesSearch = !searchValue || (item.dataset.name || "").includes(searchValue);
+                const matchesType = !typeValue || item.dataset.category === typeValue;
+                const matchesStock = !stockOnly || Number(item.dataset.stock || 0) > 0;
+                const visible = matchesSearch && matchesType && matchesStock;
+                item.classList.toggle("hidden", !visible);
+                if (visible) visibleCount++;
+            });
+
+            const sortedItems = [...items].sort((a, b) => {
+                if (sort.value === "price-asc") return Number(a.dataset.price) - Number(b.dataset.price);
+                if (sort.value === "price-desc") return Number(b.dataset.price) - Number(a.dataset.price);
+                if (sort.value === "name-asc") return (a.dataset.name || "").localeCompare(b.dataset.name || "");
+                return Number(a.dataset.index) - Number(b.dataset.index);
+            });
+            sortedItems.forEach((item) => grid.appendChild(item));
+
+            empty?.classList.toggle("hidden", visibleCount !== 0);
+
+            const nextParams = new URLSearchParams(window.location.search);
+            if (typeValue) {
+                nextParams.set("type", typeValue);
+            } else {
+                nextParams.delete("type");
+            }
+            const query = nextParams.toString();
+            const nextUrl = `${window.location.pathname}${query ? `?${query}` : ""}`;
+            window.history.replaceState({}, "", nextUrl);
+        };
+
+        [search, type, stock, sort].forEach((control) => {
+            control.addEventListener("input", applyFilters);
+            control.addEventListener("change", applyFilters);
+        });
+        applyFilters();
+    }
+
+    syncProductsPage();
+    document.addEventListener("astro:page-load", syncProductsPage);
+</script>

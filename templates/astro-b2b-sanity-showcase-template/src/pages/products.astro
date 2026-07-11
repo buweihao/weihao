@@ -1,0 +1,9 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProductListingPage from "../components/products/ProductListingPage.astro";
+import { defaultLocale, ui } from "../lib/i18n";
+---
+
+<Layout title={`${ui[defaultLocale].nav.products} | E-COMMER`}>
+    <ProductListingPage locale={defaultLocale} />
+</Layout>

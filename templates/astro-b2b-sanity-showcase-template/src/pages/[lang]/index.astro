@@ -1,0 +1,17 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Hero from "../../components/home/Hero.astro";
+import CategoryHome from "../../components/home/CategoryHome.astro";
+import FeaturedProducts from "../../components/home/FeaturedProducts.astro";
+import { locales } from "../../lib/i18n";
+
+export function getStaticPaths() {
+    return locales.map((lang) => ({ params: { lang } }));
+}
+---
+
+<Layout>
+    <Hero />
+    <CategoryHome />
+    <FeaturedProducts />
+</Layout>

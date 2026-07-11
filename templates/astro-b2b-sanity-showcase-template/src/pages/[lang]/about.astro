@@ -1,0 +1,17 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import AboutHero from "../../components/about/AboutHero.astro";
+import AboutMission from "../../components/about/AboutMission.astro";
+import AboutValues from "../../components/about/AboutValues.astro";
+import { locales } from "../../lib/i18n";
+
+export function getStaticPaths() {
+    return locales.map((lang) => ({ params: { lang } }));
+}
+---
+
+<Layout>
+    <AboutHero />
+    <AboutMission />
+    <AboutValues />
+</Layout>

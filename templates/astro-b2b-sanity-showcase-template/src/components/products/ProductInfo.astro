@@ -1,0 +1,240 @@
+---
+import { Icon } from "astro-icon/components";
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+import { getSiteSettings } from "../../data/siteSettings";
+
+interface Product {
+    name: string;
+    price: number;
+    description: string;
+    category: string;
+    stock: number;
+    badge?: string;
+    discount?: number;
+    image?: string;
+    images?: string[];
+    specs?: { label: string; value: string }[];
+}
+
+interface Props {
+    product: Product;
+}
+
+const { product } = Astro.props;
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const copy = ui[currentLocale].product;
+const siteSettings = await getSiteSettings(currentLocale);
+const whatsappHref = siteSettings.whatsappUrl
+    ? `${siteSettings.whatsappUrl}${siteSettings.whatsappUrl.includes("?") ? "&" : "?"}text=${encodeURIComponent(
+          currentLocale === "zh"
+              ? `您好，我想咨询产品：${product.name}`
+              : `Hello, I would like to inquire about: ${product.name}`,
+      )}`
+    : undefined;
+
+const discountedPrice = product.price * (1 - (product.discount || 0) / 100);
+---
+
+<div
+    class="product-info space-y-10"
+    data-product={JSON.stringify({
+        id: product.name.toLowerCase().replace(/\s+/g, "-"), // fallback
+        name: product.name,
+        price: product.price,
+        image: product.image || (product as any).images?.[0] || "",
+        category: product.category,
+        discount: product.discount,
+        stock: product.stock,
+    })}
+>
+    <!-- Header Info -->
+    <div class="space-y-4">
+        <span
+            class="text-primary font-black uppercase text-xs tracking-[0.3em] italic"
+        >
+            {product.category}
+            {product.badge ? `/ ${product.badge}` : ""}
+        </span>
+        <h1
+            class="text-4xl md:text-5xl font-black text-slate-950 uppercase tracking-tighter leading-tight"
+        >
+            {product.name}
+        </h1>
+        <div class="flex items-center gap-4">
+            <div class="flex flex-col">
+                {
+                    product.discount && product.discount > 0 && (
+                        <span class="text-sm font-bold text-slate-400 line-through decoration-red-500/50">
+                            ${product.price.toLocaleString()}
+                        </span>
+                    )
+                }
+                <span class="text-4xl font-black text-slate-900">
+                    ${
+                        discountedPrice.toLocaleString(undefined, {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                        })
+                    }
+                </span>
+            </div>
+            <div class="flex flex-col gap-2">
+                {
+                    product.discount && product.discount > 0 && (
+                        <span class="badge bg-red-50 text-red-600 border-none font-black px-3 py-1 text-[10px] uppercase tracking-widest">
+                            {copy.save} {product.discount}%!
+                        </span>
+                    )
+                }
+                {
+                    product.stock > 0 ? (
+                        <span class="badge bg-emerald-50 text-emerald-600 border-none font-bold p-3">
+                            {copy.inStock} ({product.stock})
+                        </span>
+                    ) : (
+                        <span class="badge bg-red-50 text-red-600 border-none font-bold p-3">
+                            {copy.outOfStock}
+                        </span>
+                    )
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="space-y-4">
+        <h3
+            class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400"
+        >
+            {copy.description}
+        </h3>
+        <p class="text-slate-600 font-medium leading-relaxed text-lg">
+            {
+                product.description ||
+                    copy.noDescription
+            }
+        </p>
+    </div>
+
+    <!-- Specs Grid -->
+    {
+        product.specs && (
+            <div class="grid grid-cols-2 gap-6 p-8 bg-slate-50 rounded-3xl border border-slate-100">
+                {product.specs.map((spec) => (
+                    <div class="space-y-1">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                            {spec.label}
+                        </p>
+                        <p class="text-sm font-bold text-slate-900 uppercase italic">
+                            {spec.value}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
+    <!-- Inquiry Actions -->
+    <div class="space-y-6 pt-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a
+                href="#product-inquiry"
+                class="w-full bg-primary text-primary-content rounded-2xl py-5 px-8 font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-primary/80 transition-all active:scale-[0.98]"
+            >
+                <Icon name="lucide:mail" class="w-5 h-5" />
+                {copy.inquireNow}
+            </a>
+            {whatsappHref ? (
+                <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="w-full bg-emerald-600 text-white rounded-2xl py-5 px-8 font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-emerald-700 transition-all active:scale-[0.98]"
+                >
+                    <Icon name="lucide:message-circle" class="w-5 h-5" />
+                    {copy.whatsapp}
+                </a>
+            ) : null}
+        </div>
+        <div class="grid grid-cols-[auto_1fr] gap-4">
+            <div class="flex items-center bg-slate-900 rounded-2xl p-1">
+                <button id="decrement-qty" type="button" aria-label="Decrease quantity" class="p-4 text-white hover:bg-slate-800 rounded-xl disabled:opacity-30">
+                    <Icon name="lucide:minus" class="w-4 h-4" />
+                </button>
+                <span id="quantity-display" class="w-10 text-center text-white font-bold">1</span>
+                <button id="increment-qty" type="button" aria-label="Increase quantity" class="p-4 text-white hover:bg-slate-800 rounded-xl disabled:opacity-30">
+                    <Icon name="lucide:plus" class="w-4 h-4" />
+                </button>
+            </div>
+            <button
+                id="add-to-cart-btn"
+                type="button"
+                class="w-full border-2 border-primary text-primary rounded-2xl py-4 px-6 font-black uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-primary hover:text-primary-content transition-colors disabled:opacity-50"
+                disabled={product.stock <= 0}
+            >
+                <Icon name="lucide:shopping-bag" class="w-5 h-5" />
+                {copy.addToCart}
+            </button>
+        </div>
+    </div>
+
+    <!-- Trust Badges -->
+    <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100"
+    >
+        <div class="flex items-center gap-3 text-slate-500">
+            <Icon name="lucide:shield-check" class="w-5 h-5 text-emerald-500" />
+            <span class="text-[10px] uppercase font-bold tracking-widest"
+                >{copy.certifiedWarranty}</span
+            >
+        </div>
+        <div class="flex items-center gap-3 text-slate-500">
+            <Icon name="lucide:truck" class="w-5 h-5 text-amber-500" />
+            <span class="text-[10px] uppercase font-bold tracking-widest"
+                >{copy.insuredShipping}</span
+            >
+        </div>
+    </div>
+</div>
+
+<script>
+    import { addToCart } from "../../store/cartStore";
+    import { toast } from "sonner";
+
+    function setupCartAction() {
+        const productInfo = document.querySelector<HTMLElement>(".product-info");
+        const decrement = document.getElementById("decrement-qty") as HTMLButtonElement | null;
+        const increment = document.getElementById("increment-qty") as HTMLButtonElement | null;
+        const display = document.getElementById("quantity-display");
+        const addButton = document.getElementById("add-to-cart-btn");
+        if (!productInfo || !decrement || !increment || !display || !addButton || addButton.dataset.ready) return;
+
+        addButton.dataset.ready = "true";
+        const product = JSON.parse(productInfo.dataset.product || "{}");
+        let quantity = 1;
+        const update = () => {
+            display.textContent = String(quantity);
+            decrement.disabled = quantity <= 1;
+            increment.disabled = quantity >= Number(product.stock || 0);
+        };
+
+        decrement.addEventListener("click", () => {
+            quantity = Math.max(1, quantity - 1);
+            update();
+        });
+        increment.addEventListener("click", () => {
+            quantity = Math.min(Number(product.stock || 1), quantity + 1);
+            update();
+        });
+        addButton.addEventListener("click", () => {
+            const result = addToCart(product, quantity);
+            result.success ? toast.success(result.message) : toast.error(result.message);
+        });
+        update();
+    }
+
+    setupCartAction();
+    document.addEventListener("astro:page-load", setupCartAction);
+</script>

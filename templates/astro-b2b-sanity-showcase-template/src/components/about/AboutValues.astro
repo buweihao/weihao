@@ -1,0 +1,49 @@
+---
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+import AboutCard from "./AboutCard.astro";
+const copy = ui[currentLocale].about;
+
+const values = [
+    {
+        title: copy.value1Title,
+        description:
+            copy.value1Desc,
+        icon: "lucide:award",
+    },
+    {
+        title: copy.value2Title,
+        description:
+            copy.value2Desc,
+        icon: "lucide:truck",
+    },
+    {
+        title: copy.value3Title,
+        description:
+            copy.value3Desc,
+        icon: "lucide:headset",
+    },
+];
+---
+
+<section class="py-20 bg-slate-50 px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span
+                class="text-primary font-bold uppercase tracking-widest text-sm mb-4 block"
+                >{copy.valuesTitle}</span
+            >
+            <h2
+                class="text-3xl md:text-5xl font-black text-slate-900 uppercase"
+            >
+                {copy.valuesHeading}
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {values.map((value) => <AboutCard {...value} />)}
+        </div>
+    </div>
+</section>

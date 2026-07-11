@@ -1,0 +1,60 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import { getBlogPosts } from "../../../data/blogData";
+import BlogCard from "../../../components/blog/BlogCard.astro";
+import Breadcrumbs from "../../../components/ui/Breadcrumbs.astro";
+import Pagination from "../../../components/ui/Pagination.astro";
+import { locales, localePath } from "../../../lib/i18n";
+
+export function getStaticPaths() {
+    return locales.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params;
+const blogPosts = getBlogPosts(lang);
+const url = new URL(Astro.request.url);
+const currentPage = parseInt(url.searchParams.get("page") || "1", 10);
+
+const postsPerPage = 6;
+const totalPages = Math.ceil(blogPosts.length / postsPerPage);
+
+const start = (currentPage - 1) * postsPerPage;
+const end = start + postsPerPage;
+const currentPosts = blogPosts.slice(start, end);
+---
+
+<Layout>
+  <section class="max-w-7xl mx-auto px-4 py-10 lg:py-16">
+    <div class="mb-8">
+      <Breadcrumbs
+        items={[
+          { label: lang === "zh" ? "首页" : "Home", href: localePath(lang as any, "/") },
+          { label: lang === "zh" ? "博客" : "Blog", href: localePath(lang as any, "/blog") },
+        ]}
+      />
+    </div>
+
+    <div class="text-center mb-16">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-base-content">
+        {lang === "zh" ? "行业" : "Our "}<span class="text-primary">{lang === "zh" ? "洞察" : "Blog"}</span>
+      </h1>
+      <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
+        {lang === "zh"
+          ? "分享采购、产品开发、生产管理和供应链相关知识。"
+          : "Explore sourcing, product development, manufacturing, and supply-chain insights."}
+      </p>
+    </div>
+
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {currentPosts.map((post) => <BlogCard post={post} />)}
+    </div>
+
+    <div class="flex justify-center mt-12">
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        baseUrl={localePath(lang as any, "/blog")}
+      />
+    </div>
+  </section>
+</Layout>

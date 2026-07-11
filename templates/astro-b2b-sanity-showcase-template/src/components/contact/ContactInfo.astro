@@ -1,0 +1,84 @@
+---
+import { Icon } from "astro-icon/components";
+import { getSiteSettings } from "../../data/siteSettings";
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const copy = ui[currentLocale].contactPage;
+const siteSettings = await getSiteSettings(currentLocale);
+
+const telHref = `tel:${siteSettings.contactPhone.replace(/[^\d+]/g, "")}`;
+
+const contactDetails = [
+    ...(siteSettings.whatsappUrl
+        ? [
+              {
+                  icon: "lucide:message-circle",
+                  title: "WhatsApp",
+                  lines: [siteSettings.whatsappPhone || siteSettings.contactPhone],
+                  href: siteSettings.whatsappUrl,
+                  external: true,
+              },
+          ]
+        : []),
+    {
+        icon: "lucide:map-pin",
+        title: copy.visitUs,
+        lines: siteSettings.contactAddress.split("\n").filter(Boolean),
+    },
+    {
+        icon: "lucide:phone",
+        title: copy.callUs,
+        lines: [siteSettings.contactPhone],
+        href: telHref,
+    },
+    {
+        icon: "lucide:mail",
+        title: copy.emailUs,
+        lines: [siteSettings.contactEmail],
+        href: `mailto:${siteSettings.contactEmail}`,
+    },
+];
+---
+
+<div class="space-y-6 mb-10">
+    {
+        contactDetails.map((item) => (
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    <Icon name={item.icon} class="w-5 h-5" />
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg">{item.title}</h3>
+                    <p class="text-base-content/70">
+                        {
+                            item.href ? (
+                                <a
+                                    href={item.href}
+                                    target={item.external ? "_blank" : undefined}
+                                    rel={item.external ? "noopener noreferrer" : undefined}
+                                    class="hover:text-primary transition-colors"
+                                >
+                                    {item.lines.map((line, index) => (
+                                        <>
+                                            {line}
+                                            {index < item.lines.length - 1 && <br />}
+                                        </>
+                                    ))}
+                                </a>
+                            ) : (
+                                item.lines.map((line, index) => (
+                                    <>
+                                        {line}
+                                        {index < item.lines.length - 1 && <br />}
+                                    </>
+                                ))
+                            )
+                        }
+                    </p>
+                </div>
+            </div>
+        ))
+    }
+</div>

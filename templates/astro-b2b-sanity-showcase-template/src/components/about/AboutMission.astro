@@ -1,0 +1,77 @@
+---
+import { defaultLocale, isLocale, ui } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const copy = ui[currentLocale].about;
+
+
+---
+
+<section class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="order-2 md:order-1">
+                <span
+                    class="text-primary font-bold uppercase tracking-widest text-sm mb-4 block"
+                    >{copy.missionTitle}</span
+                >
+                <h2
+                    class="text-3xl md:text-5xl font-black text-slate-900 uppercase mb-6 leading-tight"
+                >
+                    {copy.missionHeading}
+                </h2>
+                <div
+                    class="space-y-4 text-slate-600 leading-relaxed font-medium"
+                >
+                    <p>
+                        {copy.missionP1}
+                    </p>
+                    <p>
+                        {copy.missionP2}
+                    </p>
+                    <p>
+                        {copy.missionP3}
+                    </p>
+                </div>
+                <div class="mt-8 flex gap-6">
+                    <div>
+                        <span class="block text-3xl font-black text-primary"
+                            >10k+</span
+                        >
+                        <span
+                            class="text-xs uppercase font-bold text-slate-400 tracking-wider"
+                            >{copy.happyClients}</span
+                        >
+                    </div>
+                    <div class="w-px h-12 bg-slate-200"></div>
+                    <div>
+                        <span class="block text-3xl font-black text-primary"
+                            >500+</span
+                        >
+                        <span
+                            class="text-xs uppercase font-bold text-slate-400 tracking-wider"
+                            >{copy.premiumProducts}</span
+                        >
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 md:order-2 relative">
+                <div
+                    class="aspect-square rounded-2xl overflow-hidden shadow-2xl"
+                >
+                    <img
+                        src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=85&w=1200&auto=format&fit=crop"
+                        alt={currentLocale === "zh" ? "产品研发与生产" : "Product development and manufacturing"}
+                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                    />
+                </div>
+                <!-- Decorative element -->
+                <div
+                    class="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/10 rounded-full -z-10 blur-2xl"
+                >
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,161 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import CategoriesHeader from "../../../components/categories/CategoriesHeader.astro";
+import Breadcrumbs from "../../../components/ui/Breadcrumbs.astro";
+import CardProduct from "../../../components/products/CardProduct.astro";
+import {
+    getCatalogCategories,
+    getCatalogProducts,
+    isValidCategorySlug,
+    slugifyCategory,
+} from "../../../data/catalog";
+import { localePath, locales, type Locale } from "../../../lib/i18n";
+
+export async function getStaticPaths() {
+    const paths = [];
+
+    for (const lang of locales) {
+        const products = await getCatalogProducts(lang);
+        const categories = await getCatalogCategories(lang);
+        const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
+
+        for (const category of uniqueCategories) {
+            const categoryData = categories.find(
+                (c) => c.name.toLowerCase() === category.toLowerCase(),
+            );
+            const categorySlug =
+                categoryData?.slug?.trim() || slugifyCategory(category);
+
+            if (!isValidCategorySlug(categorySlug)) continue;
+
+            paths.push({
+                params: { lang, category: categorySlug },
+                props: {
+                    lang,
+                    categoryName: category,
+                    categoryProducts: products.filter((p) => p.category === category),
+                    image: categoryData?.image,
+                },
+            });
+        }
+    }
+
+    return paths;
+}
+
+const { lang, categoryName, categoryProducts, image } = Astro.props as {
+    lang: Locale;
+    categoryName: string;
+    categoryProducts: any[];
+    image?: string;
+};
+
+const breadcrumbItems = [
+    { label: "Home", href: localePath(lang, "/") },
+    { label: categoryName },
+];
+---
+
+<Layout title={`${categoryName} | E-COMMER`}>
+    <CategoriesHeader title={categoryName} image={image} />
+
+    <div class="bg-white min-h-screen pb-20 pt-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div id="breadcrumbs-container">
+                <Breadcrumbs items={breadcrumbItems} />
+            </div>
+
+            <main class="py-12">
+                <div
+                    id="products-grid"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 animate-fade-in"
+                >
+                    {
+                        categoryProducts.map((product) => (
+                            <div
+                                class="product-item transition-all duration-300"
+                                data-subcategory={
+                                    product.subcategory?.toLowerCase() || ""
+                                }
+                            >
+                                <CardProduct
+                                    title={product.title}
+                                    price={product.price}
+                                    images={product.images}
+                                    stock={product.stock}
+                                    slug={product.slug}
+                                />
+                            </div>
+                        ))
+                    }
+                </div>
+
+                <div
+                    id="no-products-msg"
+                    class="hidden text-center py-24 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200"
+                >
+                    <p
+                        class="text-slate-400 font-bold uppercase tracking-widest"
+                    >
+                        No products found in this category
+                    </p>
+                </div>
+            </main>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    function filterProducts() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const subCategory = urlParams.get("sub")?.toLowerCase();
+
+        const products = document.querySelectorAll(".product-item");
+        const noProductsMsg = document.getElementById("no-products-msg");
+        let visibleCount = 0;
+
+        if (subCategory) {
+            products.forEach((el) => {
+                const item = el as HTMLElement;
+                const itemSub = item.dataset.subcategory;
+
+                if (itemSub === subCategory) {
+                    item.classList.remove("hidden");
+                    visibleCount++;
+                } else {
+                    item.classList.add("hidden");
+                }
+            });
+        } else {
+            products.forEach((el) => {
+                el.classList.remove("hidden");
+                visibleCount++;
+            });
+        }
+
+        if (visibleCount === 0) {
+            noProductsMsg?.classList.remove("hidden");
+        } else {
+            noProductsMsg?.classList.add("hidden");
+        }
+    }
+
+    filterProducts();
+    document.addEventListener("astro:page-load", filterProducts);
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+    }
+</style>

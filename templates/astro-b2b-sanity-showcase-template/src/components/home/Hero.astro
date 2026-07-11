@@ -1,0 +1,115 @@
+---
+import { Icon } from "astro-icon/components";
+import { getHeroSlides } from "../../data/catalog";
+import { defaultLocale, isLocale } from "../../lib/i18n";
+
+const pathLocale = Astro.url.pathname.split("/").filter(Boolean)[0];
+const currentLocale = isLocale(pathLocale) ? pathLocale : defaultLocale;
+const slides = await getHeroSlides(currentLocale);
+---
+
+<section class="relative w-full overflow-hidden">
+    <!-- Swiper Container -->
+    <div class="swiper hero-swiper bg-white">
+        <div class="swiper-wrapper">
+            {
+                slides.map((slide) => (
+                    <div class="swiper-slide relative">
+                        <a
+                            href={slide.href}
+                            class="block focus:outline-none focus-visible:ring-4 focus-visible:ring-primary focus-visible:ring-inset"
+                            aria-label={slide.alt || "Open carousel link"}
+                        >
+                            <img
+                                src={slide.image}
+                                alt={slide.alt}
+                                class="block w-full h-auto"
+                            />
+                        </a>
+                    </div>
+                ))
+            }
+        </div>
+
+        <!-- Navigation -->
+        <div
+            class="hero-next text-white! w-10 h-10 hover:scale-110 transition-transform hidden sm:flex items-center justify-center bg-black/20 hover:bg-black/40 rounded-full cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 z-50"
+        >
+            <Icon name="lucide:chevron-right" class="w-6 h-6" />
+        </div>
+        <div
+            class="hero-prev text-white! w-10 h-10 hover:scale-110 transition-transform hidden sm:flex items-center justify-center bg-black/20 hover:bg-black/40 rounded-full cursor-pointer absolute left-4 top-1/2 -translate-y-1/2 z-50"
+        >
+            <Icon name="lucide:chevron-left" class="w-6 h-6" />
+        </div>
+
+        <!-- Pagination -->
+        <div class="swiper-pagination bottom-8!"></div>
+    </div>
+</section>
+
+<!-- Swiper Styles -->
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+<style>
+    /* Custom Swiper Pagination Colors */
+    :root {
+        --swiper-pagination-color: var(--color-primary);
+        --swiper-pagination-bullet-inactive-color: #fff;
+        --swiper-pagination-bullet-inactive-opacity: 0.5;
+        --swiper-pagination-bullet-size: 10px;
+        --swiper-pagination-bullet-horizontal-gap: 6px;
+    }
+
+    .swiper-pagination-bullet-active {
+        width: 24px;
+        border-radius: 5px;
+        transition: width 0.3s ease;
+    }
+
+    .hero-swiper .swiper-wrapper {
+        align-items: flex-start;
+    }
+
+    .hero-swiper .swiper-slide {
+        height: auto;
+    }
+</style>
+
+<script>
+    import Swiper from "swiper";
+    import {
+        Navigation,
+        Pagination,
+        Autoplay,
+        EffectFade,
+    } from "swiper/modules";
+
+    const initHeroSwiper = () => {
+        new Swiper(".hero-swiper", {
+            modules: [Navigation, Pagination, Autoplay, EffectFade],
+            loop: true,
+            effect: "fade",
+            autoHeight: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            navigation: {
+                nextEl: ".hero-next",
+                prevEl: ".hero-prev",
+            },
+        });
+    };
+
+    // Initialize on load and after view transitions
+    initHeroSwiper();
+    document.addEventListener("astro:after-swap", initHeroSwiper);
+</script>

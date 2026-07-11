@@ -1,0 +1,190 @@
+---
+import { Icon } from "astro-icon/components";
+import { getSiteSettings } from "../../data/siteSettings";
+import { localePath, type Locale, ui } from "../../lib/i18n";
+
+type Props = {
+    currentLocale: Locale;
+};
+
+const { currentLocale } = Astro.props;
+const copy = ui[currentLocale];
+const siteSettings = await getSiteSettings(currentLocale);
+---
+
+<footer class="bg-base-300 text-base-content pt-16 pb-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12"
+        >
+            <!-- Brand Section -->
+            <div class="col-span-1 lg:col-span-1">
+                <a href={localePath(currentLocale, "/")} class="flex items-center gap-2 mb-6 group">
+                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-lg overflow-hidden">
+                        {siteSettings.logoUrl ? (
+                            <img src={siteSettings.logoUrl} alt={`${siteSettings.brandName} logo`} class="w-full h-full object-contain" />
+                        ) : (
+                        <Icon
+                            name="lucide:shopping-bag"
+                            class="w-6 h-6 text-primary-content"
+                        />)}
+                    </div>
+                    <span
+                        class="text-2xl font-bold tracking-tighter gradient-text"
+                    >
+                        {siteSettings.brandName}
+                    </span>
+                </a>
+                <p class="text-base-content/70 mb-6 leading-relaxed">
+                    {siteSettings.footerCopy}
+                </p>
+                <!-- Socials -->
+                {
+                    siteSettings.socialLinks.length > 0 && (
+                        <div class="flex gap-4">
+                            {siteSettings.socialLinks.map((link) => (
+                                <a
+                                    href={link.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn btn-circle btn-sm btn-ghost hover:bg-primary/20 hover:text-primary transition-colors"
+                                    aria-label={link.name}
+                                >
+                                    <Icon name={link.icon} class="w-5 h-5" />
+                                </a>
+                            ))}
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Links Column 1 -->
+            <div>
+                <h3 class="font-bold text-lg mb-6 text-base-content/90">
+                    {copy.footer.shop}
+                </h3>
+                <ul class="space-y-4">
+                    <li>
+                        <a
+                            href={localePath(currentLocale, "/products")}
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.allProducts}</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.featured}</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.newArrivals}</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.discounts}</a
+                        >
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Links Column 2 -->
+            <div>
+                <h3 class="font-bold text-lg mb-6 text-base-content/90">
+                    {copy.footer.support}
+                </h3>
+                <ul class="space-y-4">
+                    <li>
+                        <a
+                            href={localePath(currentLocale, "/contact")}
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.contactUs}</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.faqs}</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.shippingReturns}</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            class="text-base-content/60 hover:text-primary hover:translate-x-1 transition-all inline-block"
+                            >{copy.footer.orderStatus}</a
+                        >
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div>
+                <h3 class="font-bold text-lg mb-6 text-base-content/90">
+                    {copy.footer.stayUpdated}
+                </h3>
+                <p class="text-base-content/70 mb-4 text-sm">
+                    {copy.footer.newsletter}
+                </p>
+                <div class="form-control w-full">
+                    <div class="relative">
+                        <input
+                            type="text"
+                            placeholder={copy.footer.emailPlaceholder}
+                            class="input input-bordered w-full pr-12 focus:outline-hidden focus:border-primary"
+                        />
+                        <button
+                            class="absolute top-0 right-0 rounded-l-none btn btn-primary px-3"
+                            aria-label="Subscribe"
+                        >
+                            <Icon name="lucide:arrow-right" class="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="border-t border-base-content/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-base-content/50"
+        >
+            <p>
+                &copy; {new Date().getFullYear()} {siteSettings.brandName}. {copy.footer.rights}
+            </p>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-base-content transition-colors"
+                    >{copy.footer.privacy}</a
+                >
+                <a href="#" class="hover:text-base-content transition-colors"
+                    >{copy.footer.terms}</a
+                >
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .gradient-text {
+        background: linear-gradient(
+            135deg,
+            var(--color-primary) 0%,
+            #6366f1 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+</style>
