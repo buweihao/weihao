@@ -87,6 +87,7 @@ export type SanityAboutImageGallery = {
 };
 
 export type SanityAboutCompanyCarousel = {
+    subtitleI18n?: Partial<Record<Locale, string | null>> | null;
     images?: Array<{ asset?: unknown }> | null;
 };
 
@@ -305,6 +306,7 @@ export async function fetchSanityAboutCompanyCarousel(): Promise<SanityAboutComp
     aboutCompanyCarouselRequest = sanityClient
         .fetch<SanityAboutCompanyCarousel | null>(`
             *[_type == "aboutCompanyCarousel" && _id == "aboutCompanyCarousel"][0] {
+                subtitleI18n,
                 "images": coalesce(images, [])[] { asset }
             }
         `)

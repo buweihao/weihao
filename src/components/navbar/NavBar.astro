@@ -31,13 +31,13 @@ const pathWithoutLocale = stripLocale(currentPath);
             <!-- Left Side: Logo -->
             <div class="navbar-start">
                 <a href={localePath(currentLocale, "/")} class="flex items-center gap-2 group">
-                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform shadow-sm overflow-hidden">
+                    <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden">
                         {siteSettings.logoUrl ? (
-                            <img src={siteSettings.logoUrl} alt={`${siteSettings.brandName} logo`} class="w-full h-full object-contain" />
+                            <img src={siteSettings.logoUrl} alt={`${siteSettings.brandName} logo`} class="block h-full w-full object-contain" />
                         ) : (
                         <Icon
                             name="lucide:shopping-bag"
-                            class="w-5 h-5 text-primary-content"
+                            class="h-6 w-6 text-primary"
                         />)}
                     </div>
                     <span
