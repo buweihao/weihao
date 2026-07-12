@@ -5,8 +5,8 @@
     "dataset": "production",
     "apiVersion": "2026-07-03",
     "studioPath": "/admin",
-    "documentTypes": ["atelierProduct", "category", "aboutPage", "aboutRecommendation", "aboutImageGallery", "siteSettings"],
-    "webhookFilterHint": "_type in [\"atelierProduct\", \"category\", \"aboutPage\", \"aboutRecommendation\", \"aboutImageGallery\", \"siteSettings\"] && !(_id in path(\"drafts.**\"))",
+    "documentTypes": ["atelierProduct", "category", "aboutPage", "aboutRecommendation", "aboutImageGallery", "aboutCompanyCarousel", "siteSettings"],
+    "webhookFilterHint": "_type in [\"atelierProduct\", \"category\", \"aboutPage\", \"aboutRecommendation\", \"aboutImageGallery\", \"aboutCompanyCarousel\", \"siteSettings\"] && !(_id in path(\"drafts.**\"))",
     "corsOrigins": [
       "http://localhost:4321",
       "https://example.com"

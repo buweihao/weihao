@@ -75,7 +75,7 @@ Key integration files:
 Sanity document types intended for launcher/webhook filters:
 
 ```groq
-_type in ["atelierProduct", "category", "aboutPage", "aboutRecommendation", "aboutImageGallery", "siteSettings"] && !(_id in path("drafts.**"))
+_type in ["atelierProduct", "category", "aboutPage", "aboutRecommendation", "aboutImageGallery", "aboutCompanyCarousel", "siteSettings"] && !(_id in path("drafts.**"))
 ```
 
 ### Dynamic product categories

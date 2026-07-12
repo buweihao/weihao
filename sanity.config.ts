@@ -46,9 +46,18 @@ export default defineConfig({
                                     .schemaType("aboutImageGallery")
                                     .documentId("aboutImageGallery"),
                             ),
+                        S.listItem()
+                            .id("aboutCompanyCarousel")
+                            .title("About Page — Company Carousel")
+                            .schemaType("aboutCompanyCarousel")
+                            .child(
+                                S.document()
+                                    .schemaType("aboutCompanyCarousel")
+                                    .documentId("aboutCompanyCarousel"),
+                            ),
                         S.divider(),
                         ...S.documentTypeListItems().filter(
-                            (item) => !["aboutPage", "aboutRecommendation", "aboutImageGallery"].includes(item.getId() ?? ""),
+                            (item) => !["aboutPage", "aboutRecommendation", "aboutImageGallery", "aboutCompanyCarousel"].includes(item.getId() ?? ""),
                         ),
                     ]),
         }),

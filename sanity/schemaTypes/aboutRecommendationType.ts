@@ -32,25 +32,23 @@ export const aboutRecommendationType = defineType({
                         }),
                         defineField({
                             name: "textI18n",
-                            title: "Text",
+                            title: "Text (optional)",
                             type: "object",
+                            description: "Leave both fields empty to display the image without a text panel.",
                             fields: [
                                 defineField({
                                     name: "en",
                                     title: "English",
                                     type: "text",
                                     rows: 3,
-                                    validation: (rule) => rule.required(),
                                 }),
                                 defineField({
                                     name: "zh",
                                     title: "中文",
                                     type: "text",
                                     rows: 3,
-                                    validation: (rule) => rule.required(),
                                 }),
                             ],
-                            validation: (rule) => rule.required(),
                         }),
                     ],
                     preview: {
@@ -69,7 +67,7 @@ export const aboutRecommendationType = defineType({
         prepare() {
             return {
                 title: "About Page — Main Recommendation",
-                subtitle: "Up to 9 image-and-text recommendation cards",
+                subtitle: "Up to 9 image cards · text is optional",
             };
         },
     },

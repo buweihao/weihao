@@ -86,6 +86,10 @@ export type SanityAboutImageGallery = {
     images?: Array<{ asset?: unknown }> | null;
 };
 
+export type SanityAboutCompanyCarousel = {
+    images?: Array<{ asset?: unknown }> | null;
+};
+
 export type SanitySiteSettings = {
     title?: string | null;
     titleI18n?: Partial<Record<Locale, string | null>> | null;
@@ -117,6 +121,7 @@ let siteSettingsRequest: Promise<SanitySiteSettings | null> | undefined;
 let aboutPageRequest: Promise<SanityAboutPage | null> | undefined;
 let aboutRecommendationRequest: Promise<SanityAboutRecommendation | null> | undefined;
 let aboutImageGalleryRequest: Promise<SanityAboutImageGallery | null> | undefined;
+let aboutCompanyCarouselRequest: Promise<SanityAboutCompanyCarousel | null> | undefined;
 
 export async function fetchSanityProducts(): Promise<SanityProductDocument[]> {
     if (!sanityClient) return [];
@@ -293,6 +298,24 @@ export async function fetchSanityAboutImageGallery(): Promise<SanityAboutImageGa
     return aboutImageGalleryRequest;
 }
 
+export async function fetchSanityAboutCompanyCarousel(): Promise<SanityAboutCompanyCarousel | null> {
+    if (!sanityClient) return null;
+    if (aboutCompanyCarouselRequest && !import.meta.env.DEV) return aboutCompanyCarouselRequest;
+
+    aboutCompanyCarouselRequest = sanityClient
+        .fetch<SanityAboutCompanyCarousel | null>(`
+            *[_type == "aboutCompanyCarousel" && _id == "aboutCompanyCarousel"][0] {
+                "images": coalesce(images, [])[] { asset }
+            }
+        `)
+        .catch((error) => {
+            console.warn("[sanity] Unable to load About Page company carousel:", error);
+            return null;
+        });
+
+    return aboutCompanyCarouselRequest;
+}
+
 export function imageUrlFor(source: unknown, width = 1200, height = 1500): string | undefined {
     if (!builder || !source) return undefined;
 
@@ -307,8 +330,19 @@ export function imageUrlForContain(source: unknown, width = 1920): string | unde
     if (!builder || !source) return undefined;
 
     try {
-        return builder.image(source).width(width).auto("format").url();
+        return builder.image(source).width(width).fit("max").quality(82).auto("format").url();
     } catch {
         return undefined;
     }
+}
+
+export function imageSrcSetForContain(source: unknown, widths = [480, 800, 1200]): string | undefined {
+    const candidates = widths
+        .map((width) => {
+            const url = imageUrlForContain(source, width);
+            return url ? `${url} ${width}w` : undefined;
+        })
+        .filter(Boolean);
+
+    return candidates.length ? candidates.join(", ") : undefined;
 }
